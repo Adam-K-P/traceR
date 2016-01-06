@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "yylex.h"
+#include "yyparse.h"
 
 using namespace std;
 
@@ -29,9 +30,17 @@ struct file {
       delete file_name;
    }
 
-   void open_yyin () {
+   void flex_file () {
       yyin = fopen (file_name->c_str(), "r");
       while (yylex()); // ;-)
+      fclose (yyin);
+   }
+
+   void bison_file () { //could possibly be declared static?
+      yyin = fopen (file_name->c_str(), "r");
+      int parse_rc = yyparse();
+      if (parse_rc) 
+         fprintf (stderr, "parse failed with code: %d\n", parse_rc);
       fclose (yyin);
    }
 
@@ -61,7 +70,7 @@ int main (int argc, char** argv) {
    vector<file*>* files = create_files (argc, argv);
    for (size_t i = 0; i < files->size(); ++i) {
       files->at(i)->write_contents();
-      files->at(i)->open_yyin();
+      files->at(i)->bison_file();
    }
    delete files;
    return EXIT_SUCCESS;

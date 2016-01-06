@@ -7,5 +7,5 @@ ______
 
 * The macros will have user-changable actions.
 
-* By default, the macros will simply print out whenever the enter/exit a 
+* By default, the macros will simply print out whenever they enter/exit a 
   function.

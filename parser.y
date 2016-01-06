@@ -1,6 +1,7 @@
 %{
 #include <cstdio>
 #include "yylex.h"
+#include "yyparse.h"
 
 void yyerror (const char*);
 %}
@@ -11,14 +12,17 @@ void yyerror (const char*);
 %token-table
 %verbose
 
-%token ROOT
+%token LETTER
 %start start
-
 
 %%
 
-start : ROOT { printf ("program begin\n"); }
+start : program  {printf ("come onnnn\n"); }
       ;
+
+program : program LETTER { printf ("inside of Bison\n"); }
+        |
+        ;
 
 %%
 

@@ -1,4 +1,13 @@
 %{
+#include <cstdio>
+#include "yyparse.h"
+
+extern int yylval;
+
+#define RETURN(SYMBOL) do { \
+   yylval = SYMBOL; \
+   return SYMBOL; \
+} while(0)
 
 %}
 
@@ -16,8 +25,8 @@ LETTER [A-Za-z_]
 
 [ \t\n]  {}
 
-{LETTER} { printf ("yahoo\n"); }
+{LETTER} { printf ("eyyy\n"); RETURN (LETTER); }
 
-. { printf ("yoooo\n"); }
+. { return 0; }
 
 %%
