@@ -32,20 +32,19 @@ STRUCT      ("struct")
 CONST       ("const")
 STATIC      ("static")
 INLINE      ("inline")
+EXTERN      ("extern")
 VOLATILE    ("volatile")
 POINTER     ('*')
 ARRAY       ("[]")
 
-QUALIFIER   [CONST | STATIC | INLINE | VOLATILE]
-TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | LONG] 
+QUALIFIERS  [CONST | STATIC | INLINE | VOLATILE | EXTERN]
+TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | (LONG)+] 
 
 %%
 
 [ \t\n]        {}
 
-{ID}           { RETURN (ID); }
-
-{QUALIFIER}    { RETURN (QUALIFIER); }
+{QUALIFIERS}   { RETURN (QUALIFIERS); }
 
 {TYPE}         { RETURN (TYPE); }
 
@@ -59,6 +58,9 @@ TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | LONG]
 "}"            { RETURN ('}'); }
 "("            { RETURN ('('); }
 ")"            { RETURN (')'); }
+","            { RETURN (','); }
+
+{ID}           { RETURN (ID); }
 
 <<EOF>>        { return 0; }
 

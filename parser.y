@@ -13,17 +13,32 @@ void yyerror (const char*);
 %verbose
 
 %token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
-       STATIC INLINE VOLATILE POINTER ARRAY QUALIFIER TYPE
+       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIERS TYPE
+       '{' '}' '(' ')' ','
 %start start
 
 %%
 
-start : program  {printf ("come onnnn\n"); }
+start : program 
       ;
 
-program : program LETTER { printf ("inside of Bison\n"); }
+program : program function { printf ("found a function\n"); }
         |
         ;
+
+function : QUALIFIERS TYPE ID params { printf ("inside function\n"); }
+         ;
+
+params : '(' decls ')' { printf ("reading params\n"); }
+       | '(' ')'
+       ;
+
+decls : decls ',' decl { printf ("inside of decls\n"); }
+      | decl           { printf ("inside of decls\n"); }
+      ;
+
+decl : TYPE ID { printf ("reading decl\n"); }
+     ;
 
 %%
 
