@@ -19,14 +19,49 @@ extern int yylval;
 %option verbose
 %option warn
 
-LETTER [A-Za-z_]
+LETTER      [A-Za-z_]
+NUMBER      [0-9]
+ID          ({LETTER}({LETTER}|{NUMBER})*)
+INT         ("int")
+VOID        ("void")
+CHAR        ("char")
+DOUBLE      ("double")
+FLOAT       ("float")
+LONG        ("long")
+STRUCT      ("struct")
+CONST       ("const")
+STATIC      ("static")
+INLINE      ("inline")
+VOLATILE    ("volatile")
+POINTER     ('*')
+ARRAY       ("[]")
+
+QUALIFIER   [CONST | STATIC | INLINE | VOLATILE]
+TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | LONG] 
 
 %%
 
-[ \t\n]  {}
+[ \t\n]        {}
 
-{LETTER} { printf ("eyyy\n"); RETURN (LETTER); }
+{ID}           { RETURN (ID); }
 
-. { return 0; }
+{QUALIFIER}    { RETURN (QUALIFIER); }
+
+{TYPE}         { RETURN (TYPE); }
+
+{STRUCT}       { RETURN (STRUCT); }
+
+{POINTER}      { RETURN (POINTER); }
+
+{ARRAY}        { RETURN (ARRAY); }
+
+"{"            { RETURN ('{'); }
+"}"            { RETURN ('}'); }
+"("            { RETURN ('('); }
+")"            { RETURN (')'); }
+
+<<EOF>>        { return 0; }
+
+.              {}
 
 %%

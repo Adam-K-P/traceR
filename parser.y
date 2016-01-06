@@ -12,7 +12,8 @@ void yyerror (const char*);
 %token-table
 %verbose
 
-%token LETTER
+%token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
+       STATIC INLINE VOLATILE POINTER ARRAY QUALIFIER TYPE
 %start start
 
 %%
