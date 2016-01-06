@@ -1,0 +1,11 @@
+traceR
+______
+
+
+* Inserts debug macros into a program (at the start and end of every function),
+  allowing the user to trace the execution of a program.
+
+* The macros will have user-changable actions.
+
+* By default, the macros will simply print out whenever the enter/exit a 
+  function.

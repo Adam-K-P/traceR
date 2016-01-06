@@ -1,13 +1,23 @@
 %{
 
-#define YY_USER_ACTION { lexer::advance(); }
-
 %}
+
+%option 8bit
+%option noyywrap
+%option nodefault
+%option noinput
+%option nounput
+%option verbose
+%option warn
 
 LETTER [A-Za-z_]
 
 %%
 
-{LETTER} { cout << "hello world" << endl; }
+[ \t\n]  {}
+
+{LETTER} { printf ("yahoo\n"); }
+
+. { printf ("yoooo\n"); }
 
 %%
