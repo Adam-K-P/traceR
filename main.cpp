@@ -30,18 +30,23 @@ struct file {
       delete file_name;
    }
 
-   void flex_file () {
-      yyin = fopen (file_name->c_str(), "r");
+   void open_yyin () {
+      string command = CPP + " " + *file_name;
+      yyin = popen (command.c_str(), "r");
+   }
+
+   void flex_file () { //obsolete?
+      open_yyin ();
       while (yylex()); // ;-)
-      fclose (yyin);
+      pclose (yyin);
    }
 
    void bison_file () { //could possibly be declared static?
-      yyin = fopen (file_name->c_str(), "r");
+      open_yyin();
       int parse_rc = yyparse();
       if (parse_rc) 
          fprintf (stderr, "parse failed with code: %d\n", parse_rc);
-      fclose (yyin);
+      pclose (yyin);
    }
 
    void write_contents () {

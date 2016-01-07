@@ -43,7 +43,6 @@ TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | (LONG)+]
 %%
 
 [ \t\n]        {}
-
 {QUALIFIERS}   { RETURN (QUALIFIERS); }
 
 {TYPE}         { RETURN (TYPE); }
