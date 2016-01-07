@@ -4,7 +4,7 @@
 CPP     = g++ -g -O0 -Wall -Wextra -std=gnu++11
 EXECBIN = traceR
 
-CPPSRC  = main.cpp yylex.cpp yyparse.cpp
+CPPSRC  = main.cpp yylex.cpp yyparse.cpp file.cpp
 OBJECTS = ${CPPSRC:.cpp=.o} 
 
 FLEX  = flex --header-file=${LEXHDR} --outfile=${LEXCPP}

@@ -12,7 +12,7 @@ void yyerror (const char*);
 %token-table
 %verbose
 
-%token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
+%token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST 
        STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIERS TYPE
        '{' '}' '(' ')' ','
 
@@ -20,18 +20,19 @@ void yyerror (const char*);
 
 %%
 
-start : program 
+start : program
       ;
 
 program : program function { printf ("found a function\n"); }
-        | program non_function 
+        | program non_function
         |
         ;
 
-/* We don't care about any of these, do nothing */
+function : TYPE ID { printf ("inside function\n"); }
+
 non_function : LETTER
              | NUMBER
-             | ID
+             | ID 
              | INT
              | VOID
              | CHAR
@@ -43,7 +44,7 @@ non_function : LETTER
              | STATIC
              | INLINE
              | VOLATILE
-             | EXTERN
+             | EXTERN 
              | POINTER
              | ARRAY
              | QUALIFIERS
@@ -54,32 +55,3 @@ non_function : LETTER
              | ')'
              | ','
              ;
-
-function : QUALIFIERS TYPE ID params { printf ("inside function\n"); }
-         | TYPE ID params            { printf ("inside func\n"); }
-         ;
-
-params : '(' decls ')' { printf ("reading params\n"); }
-       | '(' ')'       { printf ("so that's a no huh\n"); }
-       ;
-
-decls : decls ',' decl { printf ("inside of decls\n"); }
-      | decl           { printf ("inside of decls\n"); }
-      ;
-
-decl : TYPE ID { printf ("reading decl\n"); }
-     | VOID    { printf ("no fucking way\n"); }
-     ;
-
-%%
-
-void yyerror (const char* error) {
-  fprintf (stderr, "%s\n", error);
-}
-
-
-
-
-
-
-

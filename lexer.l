@@ -45,9 +45,9 @@ TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | (LONG)+]
 [ \t\n]        {}
 {QUALIFIERS}   { RETURN (QUALIFIERS); }
 
-{TYPE}         { RETURN (TYPE); }
+{TYPE}         { printf ("type: %s\n", yytext); RETURN (TYPE); }
 
-{STRUCT}       { RETURN (STRUCT); }
+{STRUCT}       { printf ("struct: %s\n", yytext); RETURN (STRUCT); }
 
 {POINTER}      { RETURN (POINTER); }
 
@@ -59,7 +59,7 @@ TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | (LONG)+]
 ")"            { RETURN (')'); }
 ","            { RETURN (','); }
 
-{ID}           { RETURN (ID); }
+{ID}           { printf ("id: %s\n", yytext);  RETURN (ID); }
 
 <<EOF>>        { return 0; }
 
