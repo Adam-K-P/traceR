@@ -22,27 +22,28 @@ extern int yylval;
 LETTER      [A-Za-z_]
 NUMBER      [0-9]
 ID          ({LETTER}({LETTER}|{NUMBER})*)
-INT         ("int")
-VOID        ("void")
-CHAR        ("char")
-DOUBLE      ("double")
-FLOAT       ("float")
-LONG        ("long")
-STRUCT      ("struct")
-CONST       ("const")
-STATIC      ("static")
-INLINE      ("inline")
-EXTERN      ("extern")
-VOLATILE    ("volatile")
-POINTER     ('*')
-ARRAY       ("[]")
+INT         "int"
+VOID        "void"
+CHAR        "char"
+DOUBLE      "double"
+FLOAT       "float"
+LONG        "long"
+STRUCT      "struct"
+CONST       "const"
+STATIC      "static"
+INLINE      "inline"
+EXTERN      "extern"
+VOLATILE    "volatile"
+POINTER     '*'
+ARRAY       "[]"
 
-QUALIFIERS  [CONST | STATIC | INLINE | VOLATILE | EXTERN]
-TYPE        [INT | VOID | CHAR | DOUBLE | FLOAT | (LONG)+] 
+QUALIFIERS  ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
+TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
 [ \t\n]        {}
+
 {QUALIFIERS}   { RETURN (QUALIFIERS); }
 
 {TYPE}         { printf ("type: %s\n", yytext); RETURN (TYPE); }

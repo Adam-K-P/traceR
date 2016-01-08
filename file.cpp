@@ -30,9 +30,11 @@ void file::flex_file () const {
 
 void file::bison_file () const {
    open_yyin ();
+   //yyin = fopen (file_name->c_str(), "r");
    int parse_rc = yyparse();
    if (parse_rc) 
       fprintf (stderr, "parse failed with code: %d\n", parse_rc);
+   //fclose (yyin);
    pclose (yyin);
 }
 

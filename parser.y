@@ -1,9 +1,11 @@
 %{
-#include <cstdio>
+#include <iostream>
 #include "yylex.h"
 #include "yyparse.h"
 
 void yyerror (const char*);
+
+using namespace std;
 %}
 
 %debug
@@ -23,12 +25,13 @@ void yyerror (const char*);
 start : program 
       ;
 
-program : program function { printf ("found a function\n"); }
+program : program function { cout << "program completed" << endl; }
         | program non_function 
         |
         ;
 
 /* We don't care about any of these, do nothing */
+/* FIXME: does not adequately solve the problem */
 non_function : LETTER
              | NUMBER
              | ID
@@ -55,20 +58,20 @@ non_function : LETTER
              | ','
              ;
 
-function : QUALIFIERS TYPE ID params { printf ("inside function\n"); }
-         | TYPE ID params            { printf ("inside func\n"); }
+function : QUALIFIERS TYPE ID params { cout << "matched function" << endl; }
+         | TYPE ID params            { cout << "matched function" << endl; }
          ;
 
-params : '(' decls ')' { printf ("reading params\n"); }
-       | '(' ')'       { printf ("so that's a no huh\n"); }
+params : '(' decls ')' { cout << "matched params" << endl; }
+       | '(' ')'       { cout << "matched empty params" << endl; }
        ;
 
-decls : decls ',' decl { printf ("inside of decls\n"); }
-      | decl           { printf ("inside of decls\n"); }
+decls : decls ',' decl { cout << "matched decls" << endl; }
+      | decl           { cout << "matched decl" << endl; }
       ;
 
-decl : TYPE ID { printf ("reading decl\n"); }
-     | VOID    { printf ("no fucking way\n"); }
+decl : TYPE ID { cout << "matched TYPE ID" << endl; }
+     | VOID    { cout << "matched VOID" << endl; }
      ;
 
 %%
