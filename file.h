@@ -22,7 +22,7 @@ struct func {
 };
 
 struct file {
-   int linenr;
+   int linenr; //unnecessary???
    std::string* file_name;
    std::vector<std::string>* contents;
    std::vector<func*>* functions;

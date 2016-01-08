@@ -28,7 +28,8 @@ int main (int argc, char** argv) {
    vector<file*>* files = create_files (argc, argv);
    for (size_t i = 0; i < files->size(); ++i) {
       files->at(i)->get_contents();
-      files->at(i)->bison_file();
+      //files->at(i)->bison_file();
+      files->at(i)->flex_file();
    }
    delete files;
    return EXIT_SUCCESS;
