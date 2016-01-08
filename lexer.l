@@ -34,7 +34,7 @@ STATIC      "static"
 INLINE      "inline"
 EXTERN      "extern"
 VOLATILE    "volatile"
-POINTER     '*'
+POINTER     ('*')+
 ARRAY       "[]"
 
 QUALIFIERS  ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
@@ -42,13 +42,14 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
-[ \t\n]        {}
+[ \t]          {}
+"\n"           { return '\n'; }
 
 {QUALIFIERS}   { RETURN (QUALIFIERS); }
 
-{TYPE}         { printf ("type: %s\n", yytext); RETURN (TYPE); }
+{TYPE}         { RETURN (TYPE); }
 
-{STRUCT}       { printf ("struct: %s\n", yytext); RETURN (STRUCT); }
+{STRUCT}       { RETURN (STRUCT); }
 
 {POINTER}      { RETURN (POINTER); }
 
@@ -60,7 +61,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 ")"            { RETURN (')'); }
 ","            { RETURN (','); }
 
-{ID}           { printf ("id: %s\n", yytext);  RETURN (ID); }
+{ID}           { RETURN (ID); }
 
 <<EOF>>        { return 0; }
 

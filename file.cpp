@@ -8,6 +8,20 @@
 
 using namespace std;
 
+token::token (int linenr) :linenr(linenr) {}
+
+token::~token () {
+   delete text;
+}
+
+func::func () {
+   tokens = new vector<token*>;
+}
+
+func::~func () {
+   delete tokens;
+}
+
 file::file () {
    contents = new vector<string>;
 }
@@ -23,22 +37,20 @@ void file::open_yyin () const {
 }
 
 void file::flex_file () const {
-   open_yyin ();
+   yyin = fopen (file_name->c_str(), "r");
    while (yylex()); // ;-)
-   pclose (yyin);
+   fclose (yyin);
 }
 
 void file::bison_file () const {
-   open_yyin ();
-   //yyin = fopen (file_name->c_str(), "r");
+   yyin = fopen (file_name->c_str(), "r");
    int parse_rc = yyparse();
    if (parse_rc) 
-      fprintf (stderr, "parse failed with code: %d\n", parse_rc);
-   //fclose (yyin);
-   pclose (yyin);
+      cerr << "parse failed with code: " << parse_rc << endl;
+   fclose (yyin);
 }
 
-void file::write_contents () {
+void file::get_contents () {
    string line;
    ifstream this_file;
    this_file.open (*file_name);
