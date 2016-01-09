@@ -2,30 +2,22 @@
 #define __FILE_H
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 const std::string CPP = "/usr/bin/cpp";
 
 struct token {
    char* text;
-   int linenr;
+   bool print; //whether to print out macro after this token or not
 
-   token (int);
+   token (char*);
    ~token ();
 };
 
-struct func { 
-   std::vector<token*>* tokens;
-
-   func ();
-   ~func ();
-};
-
 struct file {
-   int linenr; //unnecessary???
    std::string* file_name;
-   std::vector<std::string>* contents;
-   std::vector<func*>* functions;
+   std::vector<token*>* contents;
 
    file ();
    ~file ();
@@ -33,7 +25,7 @@ struct file {
    void open_yyin () const;
    void flex_file () const;
    void bison_file () const;
-   void get_contents ();
+   void display () const; // >:|
 };
 
 #endif

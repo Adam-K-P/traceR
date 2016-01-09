@@ -37,7 +37,7 @@ VOLATILE    "volatile"
 POINTER     ('*')+
 ARRAY       "[]"
 
-QUALIFIERS  ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
+QUALIFIER   ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
 TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
@@ -65,6 +65,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 <<EOF>>        { return 0; }
 
-.              {}
+.              { }
+
 
 %%

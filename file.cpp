@@ -9,22 +9,16 @@
 
 using namespace std;
 
-token::token (int linenr) :linenr(linenr) {}
+token::token (char* this_text) { 
+   text = strdup(this_text);
+}
 
 token::~token () {
-   delete text;
-}
-
-func::func () {
-   tokens = new vector<token*>;
-}
-
-func::~func () {
-   delete tokens;
+   free (text);
 }
 
 file::file () {
-   contents = new vector<string>;
+   contents = new vector<token*>;
 }
 
 file::~file () {
@@ -39,65 +33,13 @@ void file::open_yyin () const {
 
 void file::flex_file () const {
    yyin = fopen (file_name->c_str(), "r");
-   int linenr = 0; //easier for vector ops
-   for ( ;; ) {
+   for (int index = 0;;++index) {
       int yyret = yylex();
-      cout << yytext << endl;
-
-      switch (yyret) {
-
-         case 0: 
-            fclose (yyin);
-            return;
-
-         case '\n':
-            linenr++;
-            break;
-
-         case QUALIFIERS: 
-         {
-            token* this_token = new token (linenr);
-            char* this_text = strdup (yytext);
-            (void) this_token;
-            (void) this_text; /* let's figure this out ;) */
-            break;
-         }
-
-         case TYPE:
-            break;
-
-         case STRUCT:
-            break;
-
-         case POINTER:
-            break;
-
-         case ARRAY:
-            break;
-
-         case ID:
-            break;
-
-         case '{':
-            break;
-
-         case '}':
-            break;
-
-         case '(':
-            break;
-
-         case ')':
-            break;
-
-         case ',':
-            break;
-
-         default:
-            exit (EXIT_FAILURE); //error
-      }
+      if (not yyret) 
+         break;
+      token* this_token = new token (yytext);
+      contents->push_back (this_token);
    }
-
    fclose (yyin);
 }
 
@@ -109,13 +51,11 @@ void file::bison_file () const {
    fclose (yyin);
 }
 
-void file::get_contents () {
-   string line;
-   ifstream this_file;
-   this_file.open (*file_name);
-   while (getline (this_file, line)) {
-      string* this_line = new string (line);
-      contents->push_back (*this_line);
-   }
-   this_file.close();
+void file::display () const {
+   for (size_t i = 0; i < contents->size(); ++i) 
+      cout  << contents->at(i)->text << endl;
 }
+
+
+
+

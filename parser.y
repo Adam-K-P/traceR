@@ -16,7 +16,7 @@ using namespace std;
 %verbose
 
 %token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
-       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIERS TYPE
+       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE
        '{' '}' '(' ')' ','
 
 %start start
@@ -31,14 +31,14 @@ program : program function { cout << "program completed" << endl; }
         |
         ;
 
-function : QUALIFIERS TYPE ID params 
+function : QUALIFIER TYPE ID params 
                                      { cout << "matched function" << endl; }
-         | QUALIFIERS QUALIFIERS TYPE ID params
+         | QUALIFIERS QUALIFIER TYPE ID params
                                      { cout << "matched function" << endl; }
          | TYPE ID params            { cout << "matched function" << endl; }
-         | QUALIFIERS TYPE POINTER ID params
+         | QUALIFIER TYPE POINTER ID params
                                      { cout << "matched function" << endl; }
-         | QUALIFIERS QUALIFIERS TYPE POINTER ID params
+         | QUALIFIER QUALIFIER TYPE POINTER ID params
                                      { cout << "matched function" << endl; }
          | TYPE POINTER ID params    { cout << "matched function" << endl; }
 
