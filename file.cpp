@@ -9,6 +9,8 @@
 
 using namespace std;
 
+std::vector<token*>* contents;
+
 token::token (char* this_text) { 
    text = strdup(this_text);
 }
@@ -22,7 +24,9 @@ file::file () {
 }
 
 file::~file () {
-   delete contents;
+   vector<token*>* temp = contents;
+   contents = nullptr;
+   delete temp;
    delete file_name;
 }
 
@@ -37,8 +41,6 @@ void file::flex_file () const {
       int yyret = yylex();
       if (not yyret) 
          break;
-      token* this_token = new token (yytext);
-      contents->push_back (this_token);
    }
    fclose (yyin);
 }

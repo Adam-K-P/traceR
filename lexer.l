@@ -1,11 +1,12 @@
 %{
 #include <cstdio>
+#include "file.h"
 #include "yyparse.h"
 
-extern int yylval;
+extern token* yylval;
 
 #define RETURN(SYMBOL) do { \
-   yylval = SYMBOL; \
+   yylval = new token (yytext); \
    return SYMBOL; \
 } while(0)
 
@@ -45,7 +46,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 [ \t]          {}
 "\n"           { return '\n'; }
 
-{QUALIFIERS}   { RETURN (QUALIFIERS); }
+{QUALIFIER}    { RETURN (QUALIFIER); }
 
 {TYPE}         { RETURN (TYPE); }
 
@@ -66,6 +67,5 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 <<EOF>>        { return 0; }
 
 .              { }
-
 
 %%

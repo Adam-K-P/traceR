@@ -1,10 +1,10 @@
 # Adam Pinarbasi
 # Makefile for traceR
 
-CPP     = g++ -g -O0 -Wall -Wextra -std=gnu++11
+CPP     = g++ -g -O0 -Wall -Wextra -std=gnu++11 
 EXECBIN = traceR
 
-CPPSRC  = main.cpp yylex.cpp yyparse.cpp file.cpp
+CPPSRC  = main.cpp file.cpp yylex.cpp yyparse.cpp 
 OBJECTS = ${CPPSRC:.cpp=.o} 
 
 FLEX  = flex --header-file=${LEXHDR} --outfile=${LEXCPP}
@@ -36,3 +36,6 @@ clean:
 	rm yylex* yyparse*
 	rm *o
 	rm traceR
+
+test:
+	./traceR tests/fibb.c

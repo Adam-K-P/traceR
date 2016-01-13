@@ -1,10 +1,13 @@
 %{
 #include <iostream>
+#include <vector>
 
+#include "file.h"
 #include "yylex.h"
 #include "yyparse.h"
 
 void yyerror (const char*);
+
 
 using namespace std;
 %}
@@ -27,13 +30,12 @@ start : program
       ;
 
 program : program function { cout << "program completed" << endl; }
-        | program error
+        | program error    { contents->push_back ($2); }
         |
         ;
 
-function : QUALIFIER TYPE ID params 
-                                     { cout << "matched function" << endl; }
-         | QUALIFIERS QUALIFIER TYPE ID params
+function : QUALIFIER TYPE ID params  { cout << "matched function" << endl; }
+         | QUALIFIER QUALIFIER TYPE ID params
                                      { cout << "matched function" << endl; }
          | TYPE ID params            { cout << "matched function" << endl; }
          | QUALIFIER TYPE POINTER ID params
@@ -41,7 +43,6 @@ function : QUALIFIER TYPE ID params
          | QUALIFIER QUALIFIER TYPE POINTER ID params
                                      { cout << "matched function" << endl; }
          | TYPE POINTER ID params    { cout << "matched function" << endl; }
-
          ;
 
 params : '(' decls ')' { cout << "matched params" << endl; }
