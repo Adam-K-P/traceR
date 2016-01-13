@@ -56,6 +56,8 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {ARRAY}        { RETURN (ARRAY); }
 
+"<"            { RETURN ('<'); }
+">"            { RETURN ('>'); }
 "!"            { RETURN ('!'); }
 "@"            { RETURN ('@'); }
 "#"            { RETURN ('#'); }
@@ -74,6 +76,10 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 "}"            { RETURN ('}'); }
 "("            { RETURN ('('); }
 ")"            { RETURN (')'); }
+"["            { RETURN ('['); }
+"]"            { RETURN (']'); }
+"\""           { RETURN ('"'); } /* caution here */
+"'"            { RETURN ('\'');} /* maybe here too haha */
 ","            { RETURN (','); }
 
 {ID}           { RETURN (ID); }
