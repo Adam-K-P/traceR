@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -17,6 +18,16 @@ token::token (char* this_text) {
 
 token::~token () {
    free (text);
+}
+
+token* token::add (token* that_tok) {
+   string this_str(text);
+   string that_str(that_tok->text);
+   string the_str(this_str + that_str);
+   token* the_tok = new token((char*)the_str.c_str());
+   delete this;
+   delete that_tok;
+   return the_tok;
 }
 
 file::file () {

@@ -13,6 +13,8 @@ struct token {
 
    token (char*);
    ~token ();
+
+   token* add (token*);
 };
 
 struct file {

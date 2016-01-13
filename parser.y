@@ -37,21 +37,25 @@ program : program function { cout << "function matched" << endl; }
 function : QUALIFIER TYPE ID params  { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
+                                       contents->push_back ($4);
                                      }
          | QUALIFIER QUALIFIER TYPE ID params
                                      { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
+                                       contents->push_back ($5);
                                      }
          | TYPE ID params            { contents->push_back ($1);
                                        contents->push_back ($2);
+                                       contents->push_back ($3);
                                      }
          | QUALIFIER TYPE POINTER ID params
                                      { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
+                                       contents->push_back ($5);
                                      }
          | QUALIFIER QUALIFIER TYPE POINTER ID params
                                      { contents->push_back ($1);
@@ -59,23 +63,23 @@ function : QUALIFIER TYPE ID params  { contents->push_back ($1);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                       contents->push_back ($6);
                                      }
          | TYPE POINTER ID params    { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
+                                       contents->push_back ($4);
                                      }
          ;
 
-params : '(' decls ')' { contents->push_back ($1);
-                         contents->push_back ($3);
+params : '(' decls ')' { $$ = $1->add ($2);
+                         $$ = $$->add ($3);
                        }
-       | '(' ')'       { contents->push_back ($1);
-                         contents->push_back ($2);
-                       }
+       | '(' ')'       { $$ = $1->add ($2); }
        ;
 
 decls : decls ',' decl { contents->push_back ($2); }
-      | decl           {}
+      | decl           { }
       ;
 
 decl : TYPE ID          { contents->push_back ($1);
