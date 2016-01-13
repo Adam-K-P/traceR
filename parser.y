@@ -29,34 +29,66 @@ using namespace std;
 start : program 
       ;
 
-program : program function { cout << "program completed" << endl; }
+program : program function { cout << "function matched" << endl; }
         | program error    { contents->push_back ($2); }
         |
         ;
 
-function : QUALIFIER TYPE ID params  { cout << "matched function" << endl; }
+function : QUALIFIER TYPE ID params  { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                     }
          | QUALIFIER QUALIFIER TYPE ID params
-                                     { cout << "matched function" << endl; }
-         | TYPE ID params            { cout << "matched function" << endl; }
+                                     { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                       contents->push_back ($4);
+                                     }
+         | TYPE ID params            { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                     }
          | QUALIFIER TYPE POINTER ID params
-                                     { cout << "matched function" << endl; }
+                                     { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                       contents->push_back ($4);
+                                     }
          | QUALIFIER QUALIFIER TYPE POINTER ID params
-                                     { cout << "matched function" << endl; }
-         | TYPE POINTER ID params    { cout << "matched function" << endl; }
+                                     { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                       contents->push_back ($4);
+                                       contents->push_back ($5);
+                                     }
+         | TYPE POINTER ID params    { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                     }
          ;
 
-params : '(' decls ')' { cout << "matched params" << endl; }
-       | '(' ')'       { cout << "matched empty params" << endl; }
+params : '(' decls ')' { contents->push_back ($1);
+                         contents->push_back ($3);
+                       }
+       | '(' ')'       { contents->push_back ($1);
+                         contents->push_back ($2);
+                       }
        ;
 
-decls : decls ',' decl { cout << "matched decls" << endl; }
-      | decl           { cout << "matched decl" << endl; }
+decls : decls ',' decl { contents->push_back ($2); }
+      | decl           {}
       ;
 
-decl : TYPE ID          { cout << "matched TYPE ID" << endl; }
-     | TYPE POINTER ID  { cout << "matched TYPE ID" << endl; }
-     | VOID             { cout << "matched VOID" << endl; }
-     | VOID POINTER     { cout << "matched VOID pointer" << endl; }
+decl : TYPE ID          { contents->push_back ($1);
+                          contents->push_back ($2);
+                        }
+     | TYPE POINTER ID  { contents->push_back ($1);
+                          contents->push_back ($2);
+                          contents->push_back ($3);
+                        }
+     | VOID             { contents->push_back ($1); }
+     | VOID POINTER     { contents->push_back ($1);
+                          contents->push_back ($2);
+                        }
      ;
 
 %%

@@ -43,8 +43,8 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
-[ \t]          {}
-"\n"           { return '\n'; }
+"\t"           { RETURN ('\t'); }
+"\n"           { RETURN ('\n'); }
 
 {QUALIFIER}    { RETURN (QUALIFIER); }
 
@@ -56,6 +56,20 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {ARRAY}        { RETURN (ARRAY); }
 
+"!"            { RETURN ('!'); }
+"@"            { RETURN ('@'); }
+"#"            { RETURN ('#'); }
+"$"            { RETURN ('$'); }
+"%"            { RETURN ('%'); }
+"^"            { RETURN ('^'); }
+"&"            { RETURN ('&'); }
+"-"            { RETURN ('-'); }
+"+"            { RETURN ('+'); }
+"/"            { RETURN ('/'); }
+"_"            { RETURN ('_'); }
+"="            { RETURN ('='); }
+"?"            { RETURN ('?'); }
+"."            { RETURN ('.'); }
 "{"            { RETURN ('{'); }
 "}"            { RETURN ('}'); }
 "("            { RETURN ('('); }

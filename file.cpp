@@ -55,7 +55,7 @@ void file::bison_file () const {
 
 void file::display () const {
    for (size_t i = 0; i < contents->size(); ++i) 
-      cout  << contents->at(i)->text << endl;
+      cout  << contents->at(i)->text;
 }
 
 
