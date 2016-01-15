@@ -34,41 +34,55 @@ program : program function { cout << "function matched" << endl; }
         |
         ;
 
-function : QUALIFIER TYPE ID params  { contents->push_back ($1);
+function : QUALIFIER TYPE ID params '{'  
+                                     { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
+                                       $5->print_next = true;
+                                       contents->push_back ($5);
                                      }
-         | QUALIFIER QUALIFIER TYPE ID params
+         | QUALIFIER QUALIFIER TYPE ID params '{'
                                      { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                       $6->print_next = true;
+                                       contents->push_back ($6);
                                      }
-         | TYPE ID params            { contents->push_back ($1);
+         | TYPE ID params '{'        { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
+                                       $4->print_next = true;
+                                       contents->push_back ($4);
                                      }
-         | QUALIFIER TYPE POINTER ID params
+         | QUALIFIER TYPE POINTER ID params '{'
                                      { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                       $6->print_next = true;
+                                       contents->push_back ($6);
                                      }
-         | QUALIFIER QUALIFIER TYPE POINTER ID params
+         | QUALIFIER QUALIFIER TYPE POINTER ID params '{'
                                      { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
                                        contents->push_back ($6);
+                                       $7->print_next = true;
+                                       contents->push_back ($7);
                                      }
-         | TYPE POINTER ID params    { contents->push_back ($1);
+         | TYPE POINTER ID params '{'
+                                     { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
+                                       $5->print_next = true;
+                                       contents->push_back ($5);
                                      }
          ;
 
@@ -95,7 +109,5 @@ decl : TYPE ID         { $$ = $1->add ($2); }
 %%
 
 /* No need to report errors */
-void yyerror (const char* error) {
-   (void) error;
-}
+void yyerror (const char* error) { (void) error; }
 

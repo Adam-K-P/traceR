@@ -13,6 +13,7 @@ using namespace std;
 std::vector<token*>* contents;
 
 token::token (char* this_text) { 
+   print_next = false;
    text = strdup(this_text);
 }
 
@@ -60,8 +61,11 @@ void file::bison_file () const {
 }
 
 void file::display () const {
-   for (size_t i = 0; i < contents->size(); ++i) 
+   for (size_t i = 0; i < contents->size(); ++i) {
+      if (contents->at(i)->print_next) /* testing purposes only */
+         cout << "print_next activated\n" << endl;
       cout  << contents->at(i)->text;
+   }
 }
 
 
