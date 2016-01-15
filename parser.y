@@ -78,21 +78,18 @@ params : '(' decls ')' { $$ = $1->add ($2);
        | '(' ')'       { $$ = $1->add ($2); }
        ;
 
-decls : decls ',' decl { contents->push_back ($2); }
-      | decl           { }
+decls : decls ',' decl { $$ = $$->add ($2);
+                         $$ = $$->add ($3);
+                       }
+      | decl           { $$ = $1; }
       ;
 
-decl : TYPE ID          { contents->push_back ($1);
-                          contents->push_back ($2);
-                        }
-     | TYPE POINTER ID  { contents->push_back ($1);
-                          contents->push_back ($2);
-                          contents->push_back ($3);
-                        }
-     | VOID             { contents->push_back ($1); }
-     | VOID POINTER     { contents->push_back ($1);
-                          contents->push_back ($2);
-                        }
+decl : TYPE ID         { $$ = $1->add ($2); }
+     | TYPE POINTER ID { $$ = $1->add ($2);
+                         $$ = $$->add ($3);
+                       }
+     | VOID            { $$ = $1; }
+     | VOID POINTER    { $$ = $1->add ($2); }
      ;
 
 %%

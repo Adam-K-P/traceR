@@ -17,7 +17,8 @@ token::token (char* this_text) {
 }
 
 token::~token () {
-   free (text);
+   if (text != NULL)
+      free (text);
 }
 
 token* token::add (token* that_tok) {
@@ -25,8 +26,6 @@ token* token::add (token* that_tok) {
    string that_str(that_tok->text);
    string the_str(this_str + that_str);
    token* the_tok = new token((char*)the_str.c_str());
-   delete this;
-   delete that_tok;
    return the_tok;
 }
 
@@ -41,11 +40,7 @@ file::~file () {
    delete file_name;
 }
 
-void file::open_yyin () const {
-   string command = CPP + " " + *file_name;
-   yyin = popen (command.c_str(), "r");
-}
-
+//is this function necessary???
 void file::flex_file () const {
    yyin = fopen (file_name->c_str(), "r");
    for (int index = 0;;++index) {
