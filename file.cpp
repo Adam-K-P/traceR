@@ -62,8 +62,8 @@ void file::bison_file () const {
 
 void file::display () const {
    for (size_t i = 0; i < contents->size(); ++i) {
-      if (contents->at(i)->print_next) /* testing purposes only */
-         cout << "print_next activated\n" << endl;
+      /*if (contents->at(i)->print_next) 
+         cout << "print_next activated\n" << endl;*/
       cout  << contents->at(i)->text;
    }
 }

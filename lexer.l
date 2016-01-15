@@ -10,6 +10,8 @@ extern token* yylval;
    return SYMBOL; \
 } while(0)
 
+using namespace std;
+
 %}
 
 %option 8bit
@@ -46,6 +48,8 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 "\t"           { RETURN ('\t'); }
 "\n"           { RETURN ('\n'); }
 
+{NUMBER}       { RETURN (NUMBER); }
+
 {QUALIFIER}    { RETURN (QUALIFIER); }
 
 {TYPE}         { RETURN (TYPE); }
@@ -56,6 +60,10 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {ARRAY}        { RETURN (ARRAY); }
 
+{ID}           { RETURN (ID); }
+
+";"            { RETURN (';'); }
+":"            { RETURN (':'); }
 "<"            { RETURN ('<'); }
 ">"            { RETURN ('>'); }
 "!"            { RETURN ('!'); }
@@ -68,7 +76,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 "-"            { RETURN ('-'); }
 "+"            { RETURN ('+'); }
 "/"            { RETURN ('/'); }
-"_"            { RETURN ('_'); }
+"\\"           { RETURN ('\\');}
 "="            { RETURN ('='); }
 "?"            { RETURN ('?'); }
 "."            { RETURN ('.'); }
@@ -79,10 +87,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 "["            { RETURN ('['); }
 "]"            { RETURN (']'); }
 "\""           { RETURN ('"'); } /* caution here */
-"'"            { RETURN ('\'');} /* maybe here too haha */
 ","            { RETURN (','); }
-
-{ID}           { RETURN (ID); }
 
 <<EOF>>        { return 0; }
 

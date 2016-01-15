@@ -8,6 +8,14 @@
 
 void yyerror (const char*);
 
+//#define debug 
+#ifdef debug
+#define error_mac do { \
+   cout << "error: " << yytext << endl; \
+} while (0)
+#else 
+#define error_mac
+#endif
 
 using namespace std;
 %}
@@ -30,7 +38,7 @@ start : program
       ;
 
 program : program function { cout << "function matched" << endl; }
-        | program error    { contents->push_back ($2); }
+        | program error    { error_mac; contents->push_back ($2); }
         |
         ;
 
@@ -84,6 +92,10 @@ function : QUALIFIER TYPE ID params '{'
                                        $5->print_next = true;
                                        contents->push_back ($5);
                                      }
+         | TYPE ID error             { contents->push_back ($1);
+                                       contents->push_back ($2);
+                                     }
+         | TYPE error                { contents->push_back ($1); }
          ;
 
 params : '(' decls ')' { $$ = $1->add ($2);
@@ -109,5 +121,8 @@ decl : TYPE ID         { $$ = $1->add ($2); }
 %%
 
 /* No need to report errors */
-void yyerror (const char* error) { (void) error; }
-
+void yyerror (const char* error) { 
+   (void) error; 
+   cout << "yyerror: " << yytext << endl;
+}
+   
