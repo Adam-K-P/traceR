@@ -9,7 +9,8 @@ const std::string CPP = "/usr/bin/cpp";
 
 struct token {
    char* text;
-   bool print_next; //whether to print out macro after this token or not
+   bool print_header; //whether to print out start macro after this token
+   bool print_footer; //whether to print out exit macro after this token
 
    token (char*);
    ~token ();
@@ -32,6 +33,5 @@ struct file {
 extern std::vector<token*>* contents;
 
 #define YYSTYPE token*
-#include "yyparse.h"
 
 #endif
