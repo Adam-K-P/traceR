@@ -1,5 +1,5 @@
 %{
-#include <cstdio>
+#include <iostream>
 #include "file.h"
 #include "yyparse.h"
 
@@ -11,6 +11,8 @@ extern token* yylval;
 } while(0)
 
 using namespace std;
+
+/* Whitespace added to every token to simplify printing them */
 
 %}
 
@@ -39,55 +41,53 @@ EXTERN      "extern"
 VOLATILE    "volatile"
 POINTER     ('*')+
 ARRAY       "[]"
+WS          [ \t\n] 
 
 QUALIFIER   ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
 TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
-"\t"           { RETURN ('\t'); }
-"\n"           { RETURN ('\n'); }
+{NUMBER}{WS}*       { RETURN (NUMBER); }
 
-{NUMBER}       { RETURN (NUMBER); }
+{QUALIFIER}{WS}*    { RETURN (QUALIFIER); }
 
-{QUALIFIER}    { RETURN (QUALIFIER); }
+{TYPE}{WS}*         { RETURN (TYPE); }
 
-{TYPE}         { RETURN (TYPE); }
+{STRUCT}{WS}*       { RETURN (STRUCT); }
 
-{STRUCT}       { RETURN (STRUCT); }
+{POINTER}{WS}*      { RETURN (POINTER); }
 
-{POINTER}      { RETURN (POINTER); }
+{ARRAY}{WS}*        { RETURN (ARRAY); }
 
-{ARRAY}        { RETURN (ARRAY); }
+{ID}{WS}*           { RETURN (ID); }
 
-{ID}           { RETURN (ID); }
-
-";"            { RETURN (';'); }
-":"            { RETURN (':'); }
-"<"            { RETURN ('<'); }
-">"            { RETURN ('>'); }
-"!"            { RETURN ('!'); }
-"@"            { RETURN ('@'); }
-"#"            { RETURN ('#'); }
-"$"            { RETURN ('$'); }
-"%"            { RETURN ('%'); }
-"^"            { RETURN ('^'); }
-"&"            { RETURN ('&'); }
-"-"            { RETURN ('-'); }
-"+"            { RETURN ('+'); }
-"/"            { RETURN ('/'); }
-"\\"           { RETURN ('\\');}
-"="            { RETURN ('='); }
-"?"            { RETURN ('?'); }
-"."            { RETURN ('.'); }
-"{"            { RETURN ('{'); }
-"}"            { RETURN ('}'); }
-"("            { RETURN ('('); }
-")"            { RETURN (')'); }
-"["            { RETURN ('['); }
-"]"            { RETURN (']'); }
-"\""           { RETURN ('"'); } /* caution here */
-","            { RETURN (','); }
+";"{WS}*            { RETURN (';'); }
+":"{WS}*            { RETURN (':'); }
+"<"{WS}*            { RETURN ('<'); }
+">"{WS}*            { RETURN ('>'); }
+"!"{WS}*            { RETURN ('!'); }
+"@"{WS}*            { RETURN ('@'); }
+"#"{WS}*            { RETURN ('#'); }
+"$"{WS}*            { RETURN ('$'); }
+"%"{WS}*            { RETURN ('%'); }
+"^"{WS}*            { RETURN ('^'); }
+"&"{WS}*            { RETURN ('&'); }
+"-"{WS}*            { RETURN ('-'); }
+"+"{WS}*            { RETURN ('+'); }
+"/"{WS}*            { RETURN ('/'); }
+"\\"{WS}*           { RETURN ('\\');}
+"="{WS}*            { RETURN ('='); }
+"?"{WS}*            { RETURN ('?'); }
+"."{WS}*            { RETURN ('.'); }
+"{"{WS}*            { RETURN ('{'); }
+"}"{WS}*            { RETURN ('}'); }
+"("{WS}*            { RETURN ('('); }
+")"{WS}*            { RETURN (')'); }
+"["{WS}*            { RETURN ('['); }
+"]"{WS}*            { RETURN (']'); }
+"\""{WS}*           { RETURN ('"'); } /* caution here */
+","{WS}*            { RETURN (','); }
 
 <<EOF>>        { return 0; }
 

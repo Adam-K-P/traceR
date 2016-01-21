@@ -13,7 +13,8 @@ using namespace std;
 std::vector<token*>* contents;
 
 token::token (char* this_text) { 
-   print_next = false;
+   print_footer = false;
+   print_header = false;
    text = strdup(this_text);
 }
 
@@ -27,6 +28,7 @@ token* token::add (token* that_tok) {
    string that_str(that_tok->text);
    string the_str(this_str + that_str);
    token* the_tok = new token((char*)the_str.c_str());
+   delete that_tok;
    return the_tok;
 }
 
@@ -34,6 +36,7 @@ file::file () {
    contents = new vector<token*>;
 }
 
+/* dirty */
 file::~file () {
    vector<token*>* temp = contents;
    contents = nullptr;
@@ -62,9 +65,11 @@ void file::bison_file () const {
 
 void file::display () const {
    for (size_t i = 0; i < contents->size(); ++i) {
-      /*if (contents->at(i)->print_next) 
-         cout << "print_next activated\n" << endl;*/
       cout  << contents->at(i)->text;
+      if (contents->at(i)->print_header) 
+         cout << endl << "ENTERING FUNCTION" << endl;
+      if (contents->at(i)->print_footer) 
+         cout << endl << "EXITING FUNCTION" << endl;
    }
 }
 
