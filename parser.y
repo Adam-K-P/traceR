@@ -8,14 +8,27 @@
 
 void yyerror (const char*);
 
-//#define debug 
-#ifdef debug
+#define debug_error
+#ifdef debug_error
+
 #define error_mac do { \
    cout << "error: " << yytext << endl; \
 } while (0)
-#else 
+
+#else
 #define error_mac
 #endif
+
+#define debug_function
+#ifdef debug_function
+
+#define function_mac(FUNCTION) do { \
+   printf ("%s\n", FUNCTION);\
+} while (0);
+
+#else 
+#define function_mac(FUNCTION)
+#endif //debug
 
 using namespace std;
 %}
@@ -43,7 +56,9 @@ program : program function '}' { $3->print_footer = true; }
         ;
 
 function : QUALIFIER TYPE ID params '{' 
-                                     { $5->print_header = true;
+                                     { function_mac 
+                                          ( "QUALIFIER TYPE ID params");
+                                       $5->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
@@ -51,7 +66,9 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($5);
                                      }
          | QUALIFIER QUALIFIER TYPE ID params '{'
-                                     { $6->print_header = true;
+                                     { function_mac ( "QUALIFIER QUALIFIER\
+                                                       TYPE ID params");
+                                       $6->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
@@ -59,14 +76,18 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($5);
                                        contents->push_back ($6);
                                      }
-         | TYPE ID params '{'        { $4->print_header = true;
+         | TYPE ID params '{'        { function_mac ("TYPE ID params");
+                                       cout << "TYPE ID params" << endl;
+                                       $4->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                      }
          | QUALIFIER TYPE POINTER ID params '{'
-                                     { $6->print_header = true;
+                                     { function_mac 
+                                          ("QUALIFIER TYPE POINTER ID params");
+                                       $6->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
@@ -75,7 +96,9 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($6);
                                      }
          | QUALIFIER QUALIFIER TYPE POINTER ID params '{'
-                                     { $7->print_header = true;
+                                     { function_mac ("QUALIFIER QUALIFIER\
+                                                      TYPE POINTER ID params");
+                                       $7->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
@@ -85,17 +108,14 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($7);
                                      }
          | TYPE POINTER ID params '{'
-                                     { $5->print_header = true;
+                                     { function_mac ("TYPE POINTER ID params");
+                                       $5->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
                                      }
-         | TYPE ID error             { contents->push_back ($1);
-                                       contents->push_back ($2);
-                                     }
-         | TYPE error                { contents->push_back ($1); }
          ;
 
 params : '(' decls ')' { $$ = $1->add ($2);
