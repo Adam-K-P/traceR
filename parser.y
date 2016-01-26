@@ -8,7 +8,7 @@
 
 void yyerror (const char*);
 
-#define debug_error
+//#define debug_error
 #ifdef debug_error
 
 #define error_mac do { \
@@ -17,7 +17,8 @@ void yyerror (const char*);
 
 #else
 #define error_mac
-#endif
+#endif //debug_error
+
 
 #define debug_function
 #ifdef debug_function
@@ -28,7 +29,31 @@ void yyerror (const char*);
 
 #else 
 #define function_mac(FUNCTION)
-#endif //debug
+#endif //debug_function
+
+
+#define debug_params
+#ifdef debug_params
+
+#define params_mac(PARAMS) do { \
+   printf ("%s\n", PARAMS); \
+} while (0);
+
+#else 
+#define params_mac(PARAMS)
+#endif //debug_params
+
+
+#define debug_decls
+#ifdef debug_decls
+
+#define decls_mac(DECLS) do { \
+   printf ("%s\n", DECLS); \
+} while (0);
+
+#else
+#define decls_mac (DECLS)
+#endif //debug_decls
 
 using namespace std;
 %}
@@ -40,7 +65,7 @@ using namespace std;
 %verbose
 
 %token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
-       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE
+       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE TYPEM
        '{' '}' '(' ')' ','
 
 %start start
@@ -118,24 +143,37 @@ function : QUALIFIER TYPE ID params '{'
                                      }
          ;
 
-params : '(' decls ')' { $$ = $1->add ($2);
+params : '(' decls ')' { params_mac ("params with decls");
+                         $$ = $1->add ($2);
                          $$ = $$->add ($3);
                        }
-       | '(' ')'       { $$ = $1->add ($2); }
+       | '(' ')'       { params_mac ("params no decls");
+                         $$ = $1->add ($2); 
+                       }
        ;
 
-decls : decls ',' decl { $$ = $$->add ($2);
+decls : decls ',' decl { decls_mac ("matching decls");
+                         $$ = $$->add ($2);
                          $$ = $$->add ($3);
                        }
-      | decl           { $$ = $1; }
+      | decl           { decls_mac ("matching decl");
+                         $$ = $1; 
+                       }
       ;
 
-decl : TYPE ID         { $$ = $1->add ($2); } /* treating as a single token */
-     | TYPE POINTER ID { $$ = $1->add ($2);
+decl : TYPE ID         { decls_mac ("TYPE ID");
+                         $$ = $1->add ($2); /* treating as a single token */
+                       } 
+     | TYPE POINTER ID { decls_mac ("TYPE POINTER ID");
+                         $$ = $1->add ($2);
                          $$ = $$->add ($3);
                        }
-     | VOID            { $$ = $1; }
-     | VOID POINTER    { $$ = $1->add ($2); }
+     | VOID            { decls_mac ("VOID"); 
+                         $$ = $1; 
+                       }
+     | VOID POINTER    { decls_mac ("VOID POINTER");
+                         $$ = $1->add ($2); 
+                       }
      ;
 
 %%
