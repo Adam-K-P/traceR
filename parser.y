@@ -65,8 +65,8 @@ using namespace std;
 %token-table
 %verbose
 
-%token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
-       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE 
+%token LETTER NUMBER ID VOID STRUCT 
+        POINTER ARRAY QUALIFIER TYPE 
        '{' '}' '(' ')' ','
 
 %start start
@@ -76,7 +76,7 @@ using namespace std;
 start : program 
       ;
 
-program : program function '}' { $3->print_footer = true; }
+program : program function     { }
         | program error        { error_mac; contents->push_back ($2); }
         |                      { }
         ;
@@ -140,6 +140,13 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                     }
+         | TYPE error                { function_mac ("TYPE error"); 
+                                       contents->push_back ($1);
+                                     }
+         | TYPE ID error             { function_mac ("TYPE ID error"); 
+                                       contents->push_back ($1);
+                                       contents->push_back ($2);
                                      }
          ;
 
