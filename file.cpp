@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -63,14 +64,20 @@ void file::bison_file () const {
    fclose (yyin);
 }
 
-void file::display () const {
+//TODO actually print to file when it's ready
+void file::print_to_file () const {
+   //FILE* out_file = fopen (file_name->c_str(), "w");
    for (size_t i = 0; i < contents->size(); ++i) {
-      cout  << contents->at(i)->text;
+
+      //fprintf (out_file, "%s", contents->at(i)->text);
+
+      cout << contents->at(i)->text;
       if (contents->at(i)->print_header) 
-         cout << endl << "ENTERING FUNCTION" << endl;
+         cout << endl << "ENTERING FUNCTION" << endl << endl;
       if (contents->at(i)->print_footer) 
-         cout << endl << "EXITING FUNCTION" << endl;
+         cout << endl << "EXITING FUNCTION" << endl << endl;
    }
+   //fclose (out_file);
 }
 
 

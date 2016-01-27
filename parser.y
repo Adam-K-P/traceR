@@ -8,6 +8,9 @@
 
 void yyerror (const char*);
 
+//Lots of debug macros below
+
+//enable/disable debug macros here
 //#define debug_error
 #define debug_function
 #define debug_params
@@ -66,8 +69,8 @@ using namespace std;
 %verbose
 
 %token LETTER NUMBER ID VOID STRUCT 
-        POINTER ARRAY QUALIFIER TYPE 
-       '{' '}' '(' ')' ','
+       POINTER ARRAY QUALIFIER TYPE 
+       '{' '}' '(' ')' ',' 
 
 %start start
 
