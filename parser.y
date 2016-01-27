@@ -9,6 +9,10 @@
 void yyerror (const char*);
 
 //#define debug_error
+#define debug_function
+#define debug_params
+#define debug_decls
+
 #ifdef debug_error
 
 #define error_mac do { \
@@ -20,7 +24,6 @@ void yyerror (const char*);
 #endif //debug_error
 
 
-#define debug_function
 #ifdef debug_function
 
 #define function_mac(FUNCTION) do { \
@@ -32,11 +35,10 @@ void yyerror (const char*);
 #endif //debug_function
 
 
-#define debug_params
 #ifdef debug_params
 
 #define params_mac(PARAMS) do { \
-   printf ("%s\n", PARAMS); \
+   printf ("%s: %s\n", PARAMS, yytext); \
 } while (0);
 
 #else 
@@ -44,15 +46,14 @@ void yyerror (const char*);
 #endif //debug_params
 
 
-#define debug_decls
 #ifdef debug_decls
 
 #define decls_mac(DECLS) do { \
-   printf ("%s\n", DECLS); \
+   printf ("%s: %s\n", DECLS, yytext); \
 } while (0);
 
 #else
-#define decls_mac (DECLS)
+#define decls_mac(DECLS)
 #endif //debug_decls
 
 using namespace std;
@@ -65,7 +66,7 @@ using namespace std;
 %verbose
 
 %token LETTER NUMBER ID INT VOID CHAR DOUBLE FLOAT LONG STRUCT CONST
-       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE TYPEM
+       STATIC INLINE VOLATILE EXTERN POINTER ARRAY QUALIFIER TYPE 
        '{' '}' '(' ')' ','
 
 %start start
@@ -102,7 +103,6 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($6);
                                      }
          | TYPE ID params '{'        { function_mac ("TYPE ID params");
-                                       cout << "TYPE ID params" << endl;
                                        $4->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
