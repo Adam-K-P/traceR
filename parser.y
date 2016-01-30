@@ -8,13 +8,13 @@
 
 void yyerror (const char*);
 
-//Lots of debug macros below
+/* Lots of debug macros below */
 
-//enable/disable debug macros here
+/* enable/disable debug macros here */
 //#define debug_error
-#define debug_function
+/*#define debug_function
 #define debug_params
-#define debug_decls
+#define debug_decls*/
 
 #ifdef debug_error
 
@@ -68,9 +68,9 @@ using namespace std;
 %token-table
 %verbose
 
-%token LETTER NUMBER ID VOID STRUCT 
+%token NUMBER ID VOID STRUCT 
        POINTER ARRAY QUALIFIER TYPE 
-       '{' '}' '(' ')' ',' 
+       '{' '}' '(' ')' ',' '#'
 
 %start start
 
@@ -80,7 +80,10 @@ start : program
       ;
 
 program : program function     { }
-        | program error        { error_mac; contents->push_back ($2); }
+        | program error        { error_mac; contents->push_back ($2); 
+                                 yyclearin;
+                                 /* shit goes wrong here */ 
+                               }
         |                      { }
         ;
 
@@ -171,7 +174,7 @@ decls : decls ',' decl { decls_mac ("matching decls");
                        }
       ;
 
-decl : TYPE ID         { decls_mac ("TYPE ID");
+decl : TYPE ID         { decls_mac ("TYPE ID");  
                          $$ = $1->add ($2); /* treating as a single token */
                        } 
      | TYPE POINTER ID { decls_mac ("TYPE POINTER ID");
