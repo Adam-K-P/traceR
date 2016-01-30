@@ -81,8 +81,7 @@ start : program
 
 program : program function     { }
         | program error        { error_mac; contents->push_back ($2); 
-                                 yyclearin;
-                                 /* shit goes wrong here */ 
+                                 yyclearin; // squashed the bug ;-)
                                }
         |                      { }
         ;

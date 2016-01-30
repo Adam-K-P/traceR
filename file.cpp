@@ -67,6 +67,16 @@ void file::bison_file () const {
 //TODO actually print to file when it's ready
 void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");
+
+   //TODO change to fprintf when ready
+   printf (
+"#define enter_function(FUNCTION_NAME) do {\\\n\
+   printf(\"traceR: entering %%s\\n\", FUNCTION_NAME);\\\n\
+} while (0);\n\n\
+#define leave_function(FUNCTION_NAME) do {\\\n\
+   printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME);\\\n\
+} while (0);\n\n" );
+
    for (size_t i = 0; i < contents->size(); ++i) {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
@@ -77,6 +87,7 @@ void file::print_to_file () const {
       if (contents->at(i)->print_footer) 
          cout << endl << "EXITING FUNCTION" << endl << endl;
    }
+
    //fclose (out_file);
 }
 
