@@ -79,7 +79,7 @@ void file::print_contents_to_file () const {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
       
-      if (ws.first); //FIXME
+      if (ws.first) {} //FIXME 
          //printf ("%s\n", ws.second.c_str());
 
       cout << contents->at(i)->text;
@@ -107,7 +107,7 @@ void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");
 
    //TODO change to fprintf when ready
-   //insert these at top of file to simplify things
+   //insert macros at top of file to simplify things
    printf (
 "#define enter_function(FUNCTION_NAME) do { \\\n\
    printf(\"traceR: entering %%s\\n\", FUNCTION_NAME);\\\n\
