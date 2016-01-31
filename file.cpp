@@ -1,8 +1,10 @@
+#include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -72,6 +74,24 @@ void file::bison_file () const {
    fclose (yyin);
 }
 
+/* Gets the trailing whitespace from a string
+ * so that you can add it to the beginning of the
+ * appropriate string */
+static string get_ws (char* content) {
+   string* ws = new string();
+   stack<char> rev; //end up reversing whitespace string twice
+   for (int i = strlen (content) - 1; i >= 0; --i) {
+      if (isspace ((int)content[i])) 
+         rev.push (content[i]);
+      else break; 
+   }
+   while (not rev.empty()) {
+      *ws += rev.top();
+      rev.pop();
+   }
+   return *ws;
+}
+
 void file::print_contents_to_file () const {
    size_t func_cnt = 0;
    pair<bool, string> ws; //for handling whitespace
@@ -79,15 +99,14 @@ void file::print_contents_to_file () const {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
       
-      if (ws.first) {} //FIXME 
-         //printf ("%s\n", ws.second.c_str());
+      if (ws.first)  
+         printf ("%s", ws.second.c_str());
 
       cout << contents->at(i)->text;
       if (contents->at(i)->print_header) {
          ws.first = true;
-         string* space = new string(contents->at(i)->text);
-         ws.second = *space;
-         printf ("enter_function (\"%s\")\n", function_names->at(func_cnt++));
+         ws.second = get_ws (contents->at(i)->text);
+         printf ("enter_function (\"%s\");\n", function_names->at(func_cnt++));
          continue;
       }
       if (contents->at(i)->print_footer) {

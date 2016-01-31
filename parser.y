@@ -199,6 +199,5 @@ decl : TYPE ID         { decls_mac ("TYPE ID");
 /* No need to report errors */
 void yyerror (const char* error) { 
    (void) error; 
-   cout << "yyerror: " << yytext << endl;
 }
    
