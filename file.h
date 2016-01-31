@@ -27,7 +27,8 @@ struct file {
    void open_yyin () const;
    void flex_file () const;
    void bison_file () const;
-   void print_to_file () const; // >:|
+   void print_to_file () const; 
+   void print_contents_to_file () const;
 };
 
 extern std::vector<token*>* contents;

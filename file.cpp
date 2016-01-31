@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "file.h"
@@ -71,35 +72,50 @@ void file::bison_file () const {
    fclose (yyin);
 }
 
-//TODO actually print to file when it's ready
-void file::print_to_file () const {
-   //FILE* out_file = fopen (file_name->c_str(), "w");
-
-   //TODO change to fprintf when ready
-   printf (
-"#define enter_function(FUNCTION_NAME) do {\\\n\
-   printf(\"traceR: entering %%s\\n\", FUNCTION_NAME);\\\n\
-} while (0);\n\n\
-#define leave_function(FUNCTION_NAME) do {\\\n\
-   printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME);\\\n\
-} while (0);\n\n" );
-
+void file::print_contents_to_file () const {
    size_t func_cnt = 0;
+   pair<bool, string> ws; //for handling whitespace
    for (size_t i = 0; i < contents->size(); ++i) {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
+      
+      if (ws.first); //FIXME
+         //printf ("%s\n", ws.second.c_str());
 
       cout << contents->at(i)->text;
-      if (contents->at(i)->print_header) 
+      if (contents->at(i)->print_header) {
+         ws.first = true;
+         string* space = new string(contents->at(i)->text);
+         ws.second = *space;
          printf ("enter_function (\"%s\")\n", function_names->at(func_cnt++));
-      if (contents->at(i)->print_footer) 
+         continue;
+      }
+      if (contents->at(i)->print_footer) {
          //FIXME only this one should increment when ready
-         printf ("leave_function (\"%s\")\n", function_names->at(func_cnt++));
+         ws.first = true;
+         continue;
+      }
+      ws.first = false;
    }
 
    //fclose (out_file);
 }
+   
 
+//TODO actually print to file when ready
+void file::print_to_file () const {
+   //FILE* out_file = fopen (file_name->c_str(), "w");
 
+   //TODO change to fprintf when ready
+   //insert these at top of file to simplify things
+   printf (
+"#define enter_function(FUNCTION_NAME) do { \\\n\
+   printf(\"traceR: entering %%s\\n\", FUNCTION_NAME);\\\n\
+} while (0);\n\n\
+#define leave_function(FUNCTION_NAME) do { \\\n\
+   printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME);\\\n\
+} while (0);\n\n" );
 
+   print_contents_to_file ();
+}
 
