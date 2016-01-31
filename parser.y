@@ -95,6 +95,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                       function_names->push_back ($3->text);
                                      }
          | QUALIFIER QUALIFIER TYPE ID params '{'
                                      { function_mac ( "QUALIFIER QUALIFIER\
@@ -106,6 +107,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($4);
                                        contents->push_back ($5);
                                        contents->push_back ($6);
+                                       function_names->push_back ($4->text);
                                      }
          | TYPE ID params '{'        { function_mac ("TYPE ID params");
                                        $4->print_header = true;
@@ -113,6 +115,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
+                                       function_names->push_back ($2->text);
                                      }
          | QUALIFIER TYPE POINTER ID params '{'
                                      { function_mac 
@@ -124,6 +127,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($4);
                                        contents->push_back ($5);
                                        contents->push_back ($6);
+                                       function_names->push_back ($4->text);
                                      }
          | QUALIFIER QUALIFIER TYPE POINTER ID params '{'
                                      { function_mac ("QUALIFIER QUALIFIER\
@@ -136,6 +140,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($5);
                                        contents->push_back ($6);
                                        contents->push_back ($7);
+                                       function_names->push_back ($5->text);
                                      }
          | TYPE POINTER ID params '{'
                                      { function_mac ("TYPE POINTER ID params");
@@ -145,6 +150,7 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
+                                       function_names->push_back ($3->text);
                                      }
          | TYPE error                { function_mac ("TYPE error"); 
                                        contents->push_back ($1);

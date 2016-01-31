@@ -27,10 +27,11 @@ struct file {
    void open_yyin () const;
    void flex_file () const;
    void bison_file () const;
-   void display () const; // >:|
+   void print_to_file () const; // >:|
 };
 
 extern std::vector<token*>* contents;
+extern std::vector<char*>* function_names;
 
 #define YYSTYPE token*
 

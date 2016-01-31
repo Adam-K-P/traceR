@@ -11,7 +11,8 @@
 
 using namespace std;
 
-std::vector<token*>* contents;
+vector<token*>* contents;
+vector<char*>* function_names;
 
 token::token (char* this_text) { 
    print_footer = false;
@@ -35,6 +36,7 @@ token* token::add (token* that_tok) {
 
 file::file () {
    contents = new vector<token*>;
+   function_names = new vector<char*>;
 }
 
 /* dirty */
@@ -42,6 +44,11 @@ file::~file () {
    vector<token*>* temp = contents;
    contents = nullptr;
    delete temp;
+
+   vector<char*>* temp1 = function_names;
+   function_names = nullptr;
+   delete temp1;
+
    delete file_name;
 }
 
@@ -77,15 +84,17 @@ void file::print_to_file () const {
    printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME);\\\n\
 } while (0);\n\n" );
 
+   size_t func_cnt = 0;
    for (size_t i = 0; i < contents->size(); ++i) {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
 
       cout << contents->at(i)->text;
       if (contents->at(i)->print_header) 
-         cout << endl << "ENTERING FUNCTION" << endl << endl;
+         printf ("enter_function (\"%s\")\n", function_names->at(func_cnt++));
       if (contents->at(i)->print_footer) 
-         cout << endl << "EXITING FUNCTION" << endl << endl;
+         //FIXME only this one should increment when ready
+         printf ("leave_function (\"%s\")\n", function_names->at(func_cnt++));
    }
 
    //fclose (out_file);
