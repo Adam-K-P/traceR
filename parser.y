@@ -117,41 +117,6 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($4);
                                        function_names->push_back ($2->text);
                                      }
-         | QUALIFIER TYPE POINTER ID params '{'
-                                     { function_mac 
-                                          ("QUALIFIER TYPE POINTER ID params");
-                                       $6->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
-                                       contents->push_back ($4);
-                                       contents->push_back ($5);
-                                       contents->push_back ($6);
-                                       function_names->push_back ($4->text);
-                                     }
-         | QUALIFIER QUALIFIER TYPE POINTER ID params '{'
-                                     { function_mac ("QUALIFIER QUALIFIER\
-                                                      TYPE POINTER ID params");
-                                       $7->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
-                                       contents->push_back ($4);
-                                       contents->push_back ($5);
-                                       contents->push_back ($6);
-                                       contents->push_back ($7);
-                                       function_names->push_back ($5->text);
-                                     }
-         | TYPE POINTER ID params '{'
-                                     { function_mac ("TYPE POINTER ID params");
-                                       $5->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
-                                       contents->push_back ($4);
-                                       contents->push_back ($5);
-                                       function_names->push_back ($3->text);
-                                     }
          | TYPE error                { function_mac ("TYPE error"); 
                                        contents->push_back ($1);
                                      }
@@ -182,15 +147,8 @@ decls : decls ',' decl { decls_mac ("matching decls");
 decl : TYPE ID         { decls_mac ("TYPE ID");  
                          $$ = $1->add ($2); /* treating as a single token */
                        } 
-     | TYPE POINTER ID { decls_mac ("TYPE POINTER ID");
-                         $$ = $1->add ($2);
-                         $$ = $$->add ($3);
-                       }
      | VOID            { decls_mac ("VOID"); 
                          $$ = $1; 
-                       }
-     | VOID POINTER    { decls_mac ("VOID POINTER");
-                         $$ = $1->add ($2); 
                        }
      ;
 

@@ -39,7 +39,7 @@ STATIC      "static"
 INLINE      "inline"
 EXTERN      "extern"
 VOLATILE    "volatile"
-POINTER     ('*')+
+POINTER     "*"
 ARRAY       "[]"
 WS          [ \t\n] 
 
@@ -48,19 +48,19 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
-{NUMBER}{WS}*       { RETURN (NUMBER); }
+{NUMBER}{WS}*                 { RETURN (NUMBER); }
 
-{QUALIFIER}{WS}*    { RETURN (QUALIFIER); }
+{QUALIFIER}{WS}*              { RETURN (QUALIFIER); }
 
-{TYPE}{WS}*         { RETURN (TYPE); }
+{TYPE}({POINTER}|{WS})*       { RETURN (TYPE); }
 
-{STRUCT}{WS}*       { RETURN (STRUCT); }
+{STRUCT}{WS}*                 { RETURN (STRUCT); }
 
-{POINTER}{WS}*      { RETURN (POINTER); }
+{ARRAY}{WS}*                  { RETURN (ARRAY); }
 
-{ARRAY}{WS}*        { RETURN (ARRAY); }
+{ID}{WS}*                     { RETURN (ID); }
 
-{ID}{WS}*           { RETURN (ID); }
+{POINTER}{WS}*                { RETURN (POINTER); }
 
 ";"{WS}*            { RETURN (';'); }
 ":"{WS}*            { RETURN (':'); }
