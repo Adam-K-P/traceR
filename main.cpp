@@ -29,7 +29,7 @@ int main (int argc, char** argv) {
    for (size_t i = 0; i < files->size(); ++i) {
       files->at(i)->bison_file();
       //files->at(i)->flex_file();
-      files->at(i)->display();
+      files->at(i)->print_to_file();
    }
    delete files;
    return EXIT_SUCCESS;
