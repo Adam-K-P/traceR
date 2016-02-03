@@ -86,9 +86,9 @@ program : program function     { }
         |                      { }
         ;
 
-function : QUALIFIER TYPE ID params '{' 
+function : quals TYPE ID params '{' 
                                      { function_mac 
-                                          ( "QUALIFIER TYPE ID params");
+                                          ( "quals TYPE ID params");
                                        $5->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
@@ -96,18 +96,6 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($4);
                                        contents->push_back ($5);
                                        function_names->push_back ($3->text);
-                                     }
-         | QUALIFIER QUALIFIER TYPE ID params '{'
-                                     { function_mac ( "QUALIFIER QUALIFIER\
-                                                       TYPE ID params");
-                                       $6->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
-                                       contents->push_back ($4);
-                                       contents->push_back ($5);
-                                       contents->push_back ($6);
-                                       function_names->push_back ($4->text);
                                      }
          | TYPE ID params '{'        { function_mac ("TYPE ID params");
                                        $4->print_header = true;
@@ -117,14 +105,31 @@ function : QUALIFIER TYPE ID params '{'
                                        contents->push_back ($4);
                                        function_names->push_back ($2->text);
                                      }
+         | quals TYPE error          { function_mac ("quals TYPE error");
+                                       contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       yyclearin;
+                                     }
+         | quals TYPE ID error       { function_mac ("quals TYPE ID error");
+                                       contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                       yyclearin;
+                                     }
          | TYPE error                { function_mac ("TYPE error"); 
                                        contents->push_back ($1);
+                                       yyclearin;
                                      }
          | TYPE ID error             { function_mac ("TYPE ID error"); 
                                        contents->push_back ($1);
                                        contents->push_back ($2);
+                                       yyclearin;
                                      }
          ;
+
+quals : quals QUALIFIER              { $$ = $$->add ($2); }
+      | QUALIFIER                    { $$ = $1; }
+      ;
 
 params : '(' decls ')' { params_mac ("params with decls");
                          $$ = $1->add ($2);
