@@ -12,9 +12,9 @@ void yyerror (const char*);
 
 /* enable/disable debug macros here */
 //#define debug_error
-/*#define debug_function
-#define debug_params
-#define debug_decls*/
+//#define debug_function
+//#define debug_params
+//#define debug_decls
 
 #ifdef debug_error
 
@@ -68,7 +68,7 @@ using namespace std;
 %token-table
 %verbose
 
-%token NUMBER ID VOID STRUCT 
+%token NUMBER ID VOID STRUCT RETURN
        POINTER ARRAY QUALIFIER TYPE 
        '{' '}' '(' ')' ',' '#'
 
@@ -95,7 +95,15 @@ function : quals TYPE ID params '{'
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        contents->push_back ($5);
-                                       function_names->push_back ($3->text);
+
+                                       function* this_func = new function();
+                                       this_func->tokens->push_back ($1);
+                                       this_func->tokens->push_back ($2);
+                                       this_func->tokens->push_back ($3);
+                                       this_func->tokens->push_back ($4);
+                                       this_func->tokens->push_back ($5);
+                                       this_func->name = $3->text;
+                                       functions->push_back (this_func);
                                      }
          | TYPE ID params '{'        { function_mac ("TYPE ID params");
                                        $4->print_header = true;
@@ -103,27 +111,32 @@ function : quals TYPE ID params '{'
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
-                                       function_names->push_back ($2->text);
+
+                                       function* this_func = new function();
+                                       this_func->tokens->push_back ($1);
+                                       this_func->tokens->push_back ($2);
+                                       this_func->tokens->push_back ($3);
+                                       this_func->tokens->push_back ($4);
+                                       this_func->name = $2->text;
+                                       functions->push_back (this_func);
                                      }
          | quals TYPE error          { function_mac ("quals TYPE error");
                                        contents->push_back ($1);
                                        contents->push_back ($2);
-                                       yyclearin;
                                      }
          | quals TYPE ID error       { function_mac ("quals TYPE ID error");
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
-                                       yyclearin;
                                      }
          | TYPE error                { function_mac ("TYPE error"); 
                                        contents->push_back ($1);
-                                       yyclearin;
+                                       /* DO _NOT_ INCLUDE yyclearin HERE! */
                                      }
          | TYPE ID error             { function_mac ("TYPE ID error"); 
                                        contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       yyclearin;
+                                       contents->push_back ($2); 
+                                       /* DO _NOT_ INCLUDE yyclearin HERE! */
                                      }
          ;
 

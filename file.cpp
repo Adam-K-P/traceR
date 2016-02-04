@@ -15,7 +15,7 @@
 using namespace std;
 
 vector<token*>* contents;
-vector<char*>* function_names;
+vector<function*>* functions;
 
 token::token (char* this_text) { 
    print_footer = false;
@@ -37,9 +37,21 @@ token* token::add (token* that_tok) {
    return the_tok;
 }
 
+function::function () {
+   tokens = new vector<token*>;
+   is_void = false;
+   name = NULL;
+}
+
+function::~function () {
+   delete tokens;
+   if (name != NULL)
+      free (name);
+}
+
 file::file () {
    contents = new vector<token*>;
-   function_names = new vector<char*>;
+   functions = new vector<function*>;
 }
 
 /* dirty */
@@ -48,22 +60,11 @@ file::~file () {
    contents = nullptr;
    delete temp;
 
-   vector<char*>* temp1 = function_names;
-   function_names = nullptr;
-   delete temp1;
+   vector<function*>* temp2 = functions;
+   functions = nullptr;
+   delete temp2;
 
    delete file_name;
-}
-
-//is this function necessary???
-void file::flex_file () const {
-   yyin = fopen (file_name->c_str(), "r");
-   for (int index = 0;;++index) {
-      int yyret = yylex();
-      if (not yyret) 
-         break;
-   }
-   fclose (yyin);
 }
 
 void file::bison_file () const {
@@ -93,7 +94,6 @@ static string get_ws (char* content) {
 }
 
 void file::print_contents_to_file () const {
-   size_t func_cnt = 0;
    pair<bool, string> ws; //for handling whitespace
    for (size_t i = 0; i < contents->size(); ++i) {
 
@@ -106,7 +106,7 @@ void file::print_contents_to_file () const {
       if (contents->at(i)->print_header) {
          ws.first = true;
          ws.second = get_ws (contents->at(i)->text);
-         printf ("enter_function (\"%s\");\n", function_names->at(func_cnt++));
+         printf ("enter_function ();\n");
          continue;
       }
       if (contents->at(i)->print_footer) {
@@ -128,12 +128,18 @@ void file::print_to_file () const {
    //TODO change to fprintf when ready
    //insert macros at top of file to simplify things
    printf (
-"#define enter_function(FUNCTION_NAME) do { \\\n\
-   printf(\"traceR: entering %%s\\n\", FUNCTION_NAME);\\\n\
+"#define traceR //comment this line out to disable traceR\n\
+#ifdef traceR\n\n\
+#define enter_function(FUNCTION_NAME) do { \\\n\
+   printf(\"traceR: entering %%s\\n\", FUNCTION_NAME); \\\n\
 } while (0);\n\n\
 #define leave_function(FUNCTION_NAME) do { \\\n\
-   printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME);\\\n\
-} while (0);\n\n" );
+   printf(\"traceR: leaving %%s\\n\", FUNCTION_NAME); \\\n\
+} while (0);\n\n\
+#else\n\n\
+#define enter_function(FUNCTION_NAME)\n\
+#define leave_function(FUNCTION_NAME)\n\n\
+#endif //traceR\n\n");
 
    print_contents_to_file ();
 }

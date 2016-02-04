@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-const std::string CPP = "/usr/bin/cpp";
-
 struct token {
    char* text;
    bool print_header; //whether to print out start macro after this token
@@ -18,6 +16,15 @@ struct token {
    token* add (token*);
 };
 
+struct function {
+   char* name;
+   std::vector<token*>* tokens;
+   bool is_void; //whether the return type of the function is void
+
+   function ();
+   ~function ();
+};
+
 struct file {
    std::string* file_name;
 
@@ -25,14 +32,13 @@ struct file {
    ~file ();
 
    void open_yyin () const;
-   void flex_file () const;
    void bison_file () const;
    void print_to_file () const; 
    void print_contents_to_file () const;
 };
 
 extern std::vector<token*>* contents;
-extern std::vector<char*>* function_names;
+extern std::vector<function*>* functions;
 
 #define YYSTYPE token*
 
