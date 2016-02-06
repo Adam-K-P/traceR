@@ -80,15 +80,28 @@ start : program
       ;
 
 program : program function     { }
+        | program return       { }
         | program error        { error_mac; contents->push_back ($2); 
                                  yyclearin; // squashed the bug ;-)
                                }
         |                      { }
         ;
 
+return: RETURN ID              { printf ("RETURN ID matched\n"); 
+                                 contents->push_back ($1);
+                                 contents->push_back ($2);
+                                 $1->print_footer = true;
+                               }
+      | RETURN                 { printf ("RETURN matched\n");    
+                                 contents->push_back ($1);
+                                 $1->print_footer = true;
+                               }
+      ;
+
 function : quals TYPE ID params '{' 
                                      { function_mac 
                                           ( "quals TYPE ID params");
+                                       $1->func_begin = true;
                                        $5->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
@@ -103,9 +116,10 @@ function : quals TYPE ID params '{'
                                        this_func->tokens->push_back ($4);
                                        this_func->tokens->push_back ($5);
                                        this_func->name = $3->text;
-                                       functions->push_back (this_func);
+                                       functions->push (this_func);
                                      }
          | TYPE ID params '{'        { function_mac ("TYPE ID params");
+                                       $1->func_begin = true;
                                        $4->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
@@ -118,7 +132,7 @@ function : quals TYPE ID params '{'
                                        this_func->tokens->push_back ($3);
                                        this_func->tokens->push_back ($4);
                                        this_func->name = $2->text;
-                                       functions->push_back (this_func);
+                                       functions->push (this_func);
                                      }
          | quals TYPE error          { function_mac ("quals TYPE error");
                                        contents->push_back ($1);
@@ -172,7 +186,7 @@ decl : TYPE ID         { decls_mac ("TYPE ID");
 
 %%
 
-/* No need to report errors */
+/* Don't want to report errors */
 void yyerror (const char* error) { 
    (void) error; 
 }

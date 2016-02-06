@@ -26,7 +26,7 @@ using namespace std;
 
 LETTER      [A-Za-z_]
 NUMBER      [0-9]
-ID          ({LETTER}({LETTER}|{NUMBER})*)
+ID          ({LETTER}|{NUMBER})+
 INT         "int"
 VOID        "void"
 CHAR        "char"
@@ -39,6 +39,7 @@ STATIC      "static"
 INLINE      "inline"
 EXTERN      "extern"
 VOLATILE    "volatile"
+RETURN      "return"
 POINTER     "*"
 ARRAY       "[]"
 WS          [ \t\n] 
@@ -58,9 +59,12 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {ARRAY}{WS}*                  { RETURN (ARRAY); }
 
+{RETURN}{WS}*                 { RETURN (RETURN); }
+
 {ID}{WS}*                     { RETURN (ID); }
 
 {POINTER}{WS}*                { RETURN (POINTER); }
+
 
 ";"{WS}*            { RETURN (';'); }
 ":"{WS}*            { RETURN (':'); }

@@ -4,6 +4,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <queue>
 #include <stack>
 #include <string>
 #include <vector>
@@ -15,11 +16,12 @@
 using namespace std;
 
 vector<token*>* contents;
-vector<function*>* functions;
+queue<function*>* functions;
 
 token::token (char* this_text) { 
    print_footer = false;
    print_header = false;
+   func_begin   = false;
    text = strdup(this_text);
 }
 
@@ -51,7 +53,7 @@ function::~function () {
 
 file::file () {
    contents = new vector<token*>;
-   functions = new vector<function*>;
+   functions = new queue<function*>;
 }
 
 /* dirty */
@@ -60,7 +62,7 @@ file::~file () {
    contents = nullptr;
    delete temp;
 
-   vector<function*>* temp2 = functions;
+   queue<function*>* temp2 = functions;
    functions = nullptr;
    delete temp2;
 
@@ -99,19 +101,31 @@ void file::print_contents_to_file () const {
 
       //fprintf (out_file, "%s", contents->at(i)->text);
       
-      if (ws.first)  
+      if (ws.first) 
          printf ("%s", ws.second.c_str());
 
       cout << contents->at(i)->text;
+
+      function* this_func;
+      if (contents->at(i)->func_begin) {
+         this_func = functions->front();
+         functions->pop();
+      }
+
+      /*string temp (this_func->name);
+      size_t trim = temp.find_last_not_of (" ");
+      string func_name = temp.substr (trim);*/
+
       if (contents->at(i)->print_header) {
          ws.first = true;
          ws.second = get_ws (contents->at(i)->text);
-         printf ("enter_function ();\n");
+         printf ("enter_function (\"%s\");", this_func->name);
          continue;
       }
       if (contents->at(i)->print_footer) {
          //FIXME only this one should increment when ready
          ws.first = true;
+         ws.second = get_ws (contents->at(i)->text);
          continue;
       }
       ws.first = false;
