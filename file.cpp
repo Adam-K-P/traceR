@@ -96,15 +96,7 @@ static string get_ws (char* content) {
 }
 
 void file::print_contents_to_file () const {
-   pair<bool, string> ws; //for handling whitespace
    for (size_t i = 0; i < contents->size(); ++i) {
-
-      //fprintf (out_file, "%s", contents->at(i)->text);
-      
-      if (ws.first) 
-         printf ("%s", ws.second.c_str());
-
-      cout << contents->at(i)->text;
 
       function* this_func;
       if (contents->at(i)->func_begin) {
@@ -112,29 +104,24 @@ void file::print_contents_to_file () const {
          functions->pop();
       }
 
-      /*string temp (this_func->name);
-      size_t trim = temp.find_last_not_of (" ");
-      string func_name = temp.substr (trim);*/
-
       if (contents->at(i)->print_header) {
-         ws.first = true;
-         ws.second = get_ws (contents->at(i)->text);
-         printf ("enter_function (\"%s\");", this_func->name);
-         continue;
+         cout << contents->at(i)->text;
+         printf ("enter_function (\"%s\");%s", 
+                     this_func->name,
+                     (get_ws (contents->at(i)->text)).c_str());
+         continue; //already printed out this index's text
       }
-      if (contents->at(i)->print_footer) {
-         //FIXME only this one should increment when ready
-         ws.first = true;
-         ws.second = get_ws (contents->at(i)->text);
-         continue;
-      }
-      ws.first = false;
-   }
 
-   //fclose (out_file);
+      if (contents->at(i)->print_footer) {
+         printf ("leave_function (\"%s\");%s", 
+                     this_func->name,
+                     (get_ws (contents->at(i)->text)).c_str());
+      }
+
+      cout << contents->at(i)->text;
+   }
 }
    
-
 //TODO actually print to file when ready
 void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");

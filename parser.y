@@ -79,28 +79,26 @@ using namespace std;
 start : program 
       ;
 
-program : program function     { }
-        | program return       { }
+program : program function     { } 
+        | program return       { } 
         | program error        { error_mac; contents->push_back ($2); 
                                  yyclearin; // squashed the bug ;-)
                                }
         |                      { }
         ;
 
-return: RETURN ID              { printf ("RETURN ID matched\n"); 
-                                 contents->push_back ($1);
+return: RETURN ID              { contents->push_back ($1);
                                  contents->push_back ($2);
                                  $1->print_footer = true;
                                }
-      | RETURN                 { printf ("RETURN matched\n");    
-                                 contents->push_back ($1);
+      | RETURN                 { contents->push_back ($1);
                                  $1->print_footer = true;
                                }
       ;
 
 function : quals TYPE ID params '{' 
                                      { function_mac 
-                                          ( "quals TYPE ID params");
+                                          ("quals TYPE ID params");
                                        $1->func_begin = true;
                                        $5->print_header = true;
                                        contents->push_back ($1);

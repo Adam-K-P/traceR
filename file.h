@@ -1,14 +1,15 @@
 #ifndef __FILE_H
 #define __FILE_H
 
+#include <queue>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 struct token {
    char* text;
    bool print_header; //whether to print out start macro after this token
    bool print_footer; //whether to print out exit macro after this token
+   bool func_begin; //first token of a function
 
    token (char*);
    ~token ();
@@ -38,7 +39,7 @@ struct file {
 };
 
 extern std::vector<token*>* contents;
-extern std::vector<function*>* functions;
+extern std::queue<function*>* functions;
 
 #define YYSTYPE token*
 
