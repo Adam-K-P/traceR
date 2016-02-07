@@ -70,7 +70,7 @@ using namespace std;
 
 %token NUMBER ID VOID STRUCT RETURN
        POINTER ARRAY QUALIFIER TYPE 
-       '{' '}' '(' ')' ',' '#'
+       '{' '}' '(' ')' ',' '#' ';' 
 
 %start start
 
@@ -87,7 +87,7 @@ program : program function     { }
         |                      { }
         ;
 
-return: RETURN ID              { contents->push_back ($1);
+return: RETURN ID              { contents->push_back ($1); 
                                  contents->push_back ($2);
                                  $1->print_footer = true;
                                }

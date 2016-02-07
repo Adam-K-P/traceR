@@ -90,6 +90,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 ")"{WS}*            { RETURN (')'); }
 "["{WS}*            { RETURN ('['); }
 "]"{WS}*            { RETURN (']'); }
+'{WS}*              { RETURN ('\''); } /* yeah, totally not confusing */
 "\""{WS}*           { RETURN ('"'); } /* caution here */
 ","{WS}*            { RETURN (','); }
 

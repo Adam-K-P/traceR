@@ -96,6 +96,7 @@ static string get_ws (char* content) {
 }
 
 void file::print_contents_to_file () const {
+   string prev_ws;
    for (size_t i = 0; i < contents->size(); ++i) {
 
       function* this_func;
@@ -109,20 +110,20 @@ void file::print_contents_to_file () const {
          printf ("enter_function (\"%s\");%s", 
                      this_func->name,
                      (get_ws (contents->at(i)->text)).c_str());
+         prev_ws = get_ws (contents->at(i)->text); //set before continuing
          continue; //already printed out this index's text
       }
 
-      if (contents->at(i)->print_footer) {
-         printf ("leave_function (\"%s\");%s", 
-                     this_func->name,
-                     (get_ws (contents->at(i)->text)).c_str());
-      }
+      if (contents->at(i)->print_footer) 
+         printf ("leave_function (\"%s\");%s", this_func->name, 
+                                               prev_ws.c_str());
 
       cout << contents->at(i)->text;
+      prev_ws = get_ws (contents->at(i)->text);
    }
 }
    
-//TODO actually print to file when ready
+//TODO actually print to file 
 void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");
 
