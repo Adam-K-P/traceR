@@ -53,6 +53,8 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {QUALIFIER}{WS}*              { RETURN (QUALIFIER); }
 
+{VOID}({POINTER}|{WS})*       { RETURN (VOID); }
+
 {TYPE}({POINTER}|{WS})*       { RETURN (TYPE); }
 
 {STRUCT}{WS}*                 { RETURN (STRUCT); }
@@ -64,7 +66,6 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 {ID}{WS}*                     { RETURN (ID); }
 
 {POINTER}{WS}*                { RETURN (POINTER); }
-
 
 ";"{WS}*            { RETURN (';'); }
 ":"{WS}*            { RETURN (':'); }
@@ -90,7 +91,7 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 ")"{WS}*            { RETURN (')'); }
 "["{WS}*            { RETURN ('['); }
 "]"{WS}*            { RETURN (']'); }
-'{WS}*              { RETURN ('\''); } /* yeah, totally not confusing */
+'{WS}*              { RETURN ('\''); } /* yeah, totally not confusing ;-) */
 "\""{WS}*           { RETURN ('"'); } /* caution here */
 ","{WS}*            { RETURN (','); }
 

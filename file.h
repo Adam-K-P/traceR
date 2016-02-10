@@ -10,6 +10,7 @@ struct token {
    bool print_header; //whether to print out start macro after this token
    bool print_footer; //whether to print out exit macro after this token
    bool func_begin; //first token of a function
+   bool void_func; //first token of void function
 
    token (char*);
    ~token ();

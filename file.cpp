@@ -22,6 +22,7 @@ token::token (char* this_text) {
    print_footer = false;
    print_header = false;
    func_begin   = false;
+   void_func    = false;
    text = strdup(this_text);
 }
 
@@ -95,6 +96,33 @@ static string get_ws (char* content) {
    return *ws;
 }
 
+static bool foot_func_check (function* this_func, int i) {
+   if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
+      return false;
+   if (contents->at(i + 1)->func_begin and this_func->is_void) 
+      return true;
+   return false;
+}
+
+static string handle_header (function* this_func, int i) {
+   cout << contents->at(i)->text;
+   printf ("enter_function (\"%s\");%s",
+              this_func->name,
+             (get_ws (contents->at(i)->text)).c_str());
+   return get_ws (contents->at(i)->text);
+}
+
+static void handle_footer (function* this_func, string prev_ws, int i) {
+   if (contents->at(i)->print_footer) 
+      printf ("leave_function (\"%s\");%s", this_func->name,
+                                            prev_ws.c_str());
+
+   if ( (not strncmp (contents->at(i)->text, "}", 1)) and
+        (foot_func_check (this_func, i)) ) {
+      cout << "matched '}' character" << endl;
+   }
+}
+
 void file::print_contents_to_file () const {
    string prev_ws;
    for (size_t i = 0; i < contents->size(); ++i) {
@@ -106,18 +134,19 @@ void file::print_contents_to_file () const {
       }
 
       if (contents->at(i)->print_header) {
+         prev_ws = handle_header (this_func, i);
+         continue;
+      }
+      /*if (contents->at(i)->print_header) {
          cout << contents->at(i)->text;
          printf ("enter_function (\"%s\");%s", 
                      this_func->name,
                      (get_ws (contents->at(i)->text)).c_str());
          prev_ws = get_ws (contents->at(i)->text); //set before continuing
          continue; //already printed out this index's text
-      }
+      }*/
 
-      if (contents->at(i)->print_footer) 
-         printf ("leave_function (\"%s\");%s", this_func->name, 
-                                               prev_ws.c_str());
-
+      handle_footer (this_func, prev_ws, i);
       cout << contents->at(i)->text;
       prev_ws = get_ws (contents->at(i)->text);
    }
