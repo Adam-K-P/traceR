@@ -96,14 +96,6 @@ static string get_ws (char* content) {
    return *ws;
 }
 
-static bool foot_func_check (function* this_func, int i) {
-   if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
-      return false;
-   if (contents->at(i + 1)->func_begin and this_func->is_void) 
-      return true;
-   return false;
-}
-
 static string handle_header (function* this_func, int i) {
    cout << contents->at(i)->text;
    printf ("enter_function (\"%s\");%s",
@@ -112,15 +104,21 @@ static string handle_header (function* this_func, int i) {
    return get_ws (contents->at(i)->text);
 }
 
+static bool foot_func_check (function* this_func, int i) {
+   if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
+      return false;
+   //cout << "contents->at(i + 1)" << contents->at(i+ 1)->text << endl;
+   if (contents->at(i + 1)->func_begin and this_func->is_void) 
+      return true;
+   return false;
+}
+
 static void handle_footer (function* this_func, string prev_ws, int i) {
-   if (contents->at(i)->print_footer) 
+   if ( contents->at(i)->print_footer xor 
+       (not strncmp (contents->at(i)->text, "}", 1) and 
+       (foot_func_check (this_func, i))) )
       printf ("leave_function (\"%s\");%s", this_func->name,
                                             prev_ws.c_str());
-
-   if ( (not strncmp (contents->at(i)->text, "}", 1)) and
-        (foot_func_check (this_func, i)) ) {
-      cout << "matched '}' character" << endl;
-   }
 }
 
 void file::print_contents_to_file () const {
@@ -137,14 +135,6 @@ void file::print_contents_to_file () const {
          prev_ws = handle_header (this_func, i);
          continue;
       }
-      /*if (contents->at(i)->print_header) {
-         cout << contents->at(i)->text;
-         printf ("enter_function (\"%s\");%s", 
-                     this_func->name,
-                     (get_ws (contents->at(i)->text)).c_str());
-         prev_ws = get_ws (contents->at(i)->text); //set before continuing
-         continue; //already printed out this index's text
-      }*/
 
       handle_footer (this_func, prev_ws, i);
       cout << contents->at(i)->text;
@@ -152,7 +142,7 @@ void file::print_contents_to_file () const {
    }
 }
    
-//TODO actually print to file 
+//TODO actually print to a file 
 void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");
 

@@ -45,7 +45,6 @@ ARRAY       "[]"
 WS          [ \t\n] 
 
 QUALIFIER   ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
-TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 %%
 
@@ -53,9 +52,17 @@ TYPE        ({INT}|{VOID}|{CHAR}|{DOUBLE}|{FLOAT}|{LONG})
 
 {QUALIFIER}{WS}*              { RETURN (QUALIFIER); }
 
+{INT}({POINTER}|{WS})*        { RETURN (INT); }
+
 {VOID}({POINTER}|{WS})*       { RETURN (VOID); }
 
-{TYPE}({POINTER}|{WS})*       { RETURN (TYPE); }
+{CHAR}({POINTER}|{WS})*       { RETURN (CHAR); }
+
+{DOUBLE}({POINTER}|{WS})*     { RETURN (DOUBLE); }
+
+{FLOAT}({POINTER}|{WS})*      { RETURN (FLOAT); }
+
+{LONG}({POINTER}|{WS})*       { RETURN (LONG); }
 
 {STRUCT}{WS}*                 { RETURN (STRUCT); }
 

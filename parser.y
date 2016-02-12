@@ -71,8 +71,9 @@ using namespace std;
 %token-table
 %verbose
 
-%token NUMBER ID VOID STRUCT RETURN
-       POINTER ARRAY QUALIFIER TYPE 
+%token NUMBER ID STRUCT RETURN
+       POINTER ARRAY QUALIFIER  
+       INT VOID CHAR DOUBLE FLOAT LONG 
        '{' '}' '(' ')' ',' '#' ';' 
 
 %start start
@@ -99,7 +100,7 @@ return : RETURN ID             { contents->push_back ($1);
                                }
       ;
 
-function : quals TYPE ID params '{'
+function : quals type ID params '{'
                                      { function_mac 
                                           ("quals TYPE ID params");
                                        $1->func_begin = true;
@@ -119,7 +120,7 @@ function : quals TYPE ID params '{'
                                        this_func->name = $3->text;
                                        functions->push (this_func);
                                      }
-         | TYPE ID params '{'       { function_mac ("TYPE ID params");
+         | type ID params '{'        { function_mac ("TYPE ID params");
                                        $1->func_begin = true;
                                        $4->print_header = true;
                                        contents->push_back ($1);
@@ -128,10 +129,8 @@ function : quals TYPE ID params '{'
                                        contents->push_back ($4);
 
                                        function* this_func = new function();
-                                       if ($1->void_func) {
-                                          cout << "omg ... again" << endl;
+                                       if ($1->void_func) 
                                           this_func->is_void = true;
-                                       }
                                        this_func->tokens->push_back ($1);
                                        this_func->tokens->push_back ($2);
                                        this_func->tokens->push_back ($3);
@@ -139,25 +138,25 @@ function : quals TYPE ID params '{'
                                        this_func->name = $2->text;
                                        functions->push (this_func);
                                      }
-         | quals TYPE error          { function_mac ("quals TYPE error");
+         | quals type error          { function_mac ("quals TYPE error");
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);  
                                        yyclearin;
                                      }
-         | quals TYPE ID error       { function_mac ("quals TYPE ID error");
+         | quals type ID error       { function_mac ("quals TYPE ID error");
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        yyclearin;
                                      }
-         | TYPE error                { function_mac ("TYPE error"); 
+         | type error                { function_mac ("TYPE error"); 
                                        contents->push_back ($1);
                                        contents->push_back ($2);
                                        yyclearin; 
                                      }
-         | TYPE ID error             { function_mac ("TYPE ID error"); 
+         | type ID error             { function_mac ("TYPE ID error"); 
                                        contents->push_back ($1);
                                        contents->push_back ($2); 
                                        contents->push_back ($3);
@@ -165,9 +164,13 @@ function : quals TYPE ID params '{'
                                      }
          ;
 
-type : TYPE    { $$ = $1; }
-     | VOID    { $$ = $1; }
-     ;       
+type: INT      { $$ = $1; }
+    | VOID     { $1->void_func = true; $$ = $1; }
+    | CHAR     { $$ = $1; }
+    | DOUBLE   { $$ = $1; }
+    | FLOAT    { $$ = $1; }
+    | LONG     { $$ = $1; }
+    ;
 
 quals : quals QUALIFIER    { $$ = $$->add ($2); }
       | QUALIFIER          { $$ = $1; }
@@ -191,11 +194,10 @@ decls : decls ',' decl { decls_mac ("matching decls");
                        }
       ;
 
-decl : TYPE ID         { decls_mac ("TYPE ID");  
+decl : type ID         { decls_mac ("TYPE ID");  
                          $$ = $1->add ($2); /* treating as a single token */
                        } 
      | VOID            { decls_mac ("VOID"); 
-                         $1->void_func = true;
                          $$ = $1; 
                        }
      ;
