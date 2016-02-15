@@ -1,4 +1,3 @@
-#include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -96,8 +95,15 @@ static string get_ws (char* content) {
    return *ws;
 }
 
+//remove trailing whitespace
+void rm_trailing (char* text) {
+   while (isspace (text[strlen (text) - 1]))
+      text[strlen (text) - 1] = '\0';
+}
+
 static string handle_header (function* this_func, int i) {
-   cout << contents->at(i)->text;
+   cout << contents->at(i)->text; //gotta print '{' out first
+   rm_trailing (this_func->name); 
    printf ("enter_function (\"%s\");%s",
               this_func->name,
              (get_ws (contents->at(i)->text)).c_str());
@@ -106,7 +112,7 @@ static string handle_header (function* this_func, int i) {
 
 static bool foot_func_check (function* this_func, int i) {
    if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
-      return false;
+      return false; 
    //cout << "contents->at(i + 1)" << contents->at(i+ 1)->text << endl;
    if (contents->at(i + 1)->func_begin and this_func->is_void) 
       return true;
@@ -114,18 +120,22 @@ static bool foot_func_check (function* this_func, int i) {
 }
 
 static void handle_footer (function* this_func, string prev_ws, int i) {
-   if ( contents->at(i)->print_footer xor 
-       (not strncmp (contents->at(i)->text, "}", 1) and 
-       (foot_func_check (this_func, i))) )
+   if (contents->at(i)->print_footer) 
       printf ("leave_function (\"%s\");%s", this_func->name,
                                             prev_ws.c_str());
+   //TODO BELOW DOES NOT HAVE PROPER PRIOR WHITESPACE!!!
+   //need a prev_prev_ws essentially
+   else if (not strncmp (contents->at(i)->text, "}", 1) and
+                foot_func_check (this_func, i)) {
+      printf ("leave_function (\"%s\");%s", this_func->name,
+                                            prev_ws.c_str());
+   }
 }
 
 void file::print_contents_to_file () const {
    string prev_ws;
+   function* this_func;
    for (size_t i = 0; i < contents->size(); ++i) {
-
-      function* this_func;
       if (contents->at(i)->func_begin) {
          this_func = functions->front();
          functions->pop();

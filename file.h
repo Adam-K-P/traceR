@@ -39,6 +39,7 @@ struct file {
    void print_contents_to_file () const;
 };
 
+//Need to be global for bison
 extern std::vector<token*>* contents;
 extern std::queue<function*>* functions;
 

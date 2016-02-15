@@ -1,5 +1,7 @@
 %{
+#include <cctype>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "file.h"
@@ -95,10 +97,15 @@ return : RETURN ID             { contents->push_back ($1);
                                  contents->push_back ($2);
                                  $1->print_footer = true;
                                }
-      | RETURN                 { contents->push_back ($1);
+       | RETURN error          { contents->push_back ($1);
+                                 contents->push_back ($2);
+                                 yyclearin;
                                  $1->print_footer = true;
                                }
-      ;
+       | RETURN                { contents->push_back ($1);
+                                 $1->print_footer = true;
+                               }
+       ;
 
 function : quals type ID params '{'
                                      { function_mac 
