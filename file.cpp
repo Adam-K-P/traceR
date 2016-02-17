@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "analyzer.h"
 #include "file.h"
 #include "yylex.h"
 #include "yyparse.h"
@@ -77,6 +78,11 @@ void file::bison_file () const {
    fclose (yyin);
 }
 
+/*******************************************************************************
+ * EVERYTHING BELOW IS BEING MIGRATED TO ANALYZER MODULE
+ *******************************************************************************
+ */
+
 /* Gets the trailing whitespace from a string
  * so that you can add it to the beginning of the
  * appropriate string */
@@ -96,7 +102,7 @@ static string get_ws (char* content) {
 }
 
 //remove trailing whitespace
-void rm_trailing (char* text) {
+static void rm_trailing (char* text) {
    while (isspace (text[strlen (text) - 1]))
       text[strlen (text) - 1] = '\0';
 }
@@ -119,21 +125,22 @@ static bool foot_func_check (function* this_func, int i) {
    return false;
 }
 
-static void handle_footer (function* this_func, string prev_ws, int i) {
+static void handle_footer (function* this_func, vector<string> whitespace,
+                           int i) {
    if (contents->at(i)->print_footer) 
       printf ("leave_function (\"%s\");%s", this_func->name,
-                                            prev_ws.c_str());
+                                            whitespace.at(i - 1).c_str());
    //TODO BELOW DOES NOT HAVE PROPER PRIOR WHITESPACE!!!
    //need a prev_prev_ws essentially
    else if (not strncmp (contents->at(i)->text, "}", 1) and
                 foot_func_check (this_func, i)) {
       printf ("leave_function (\"%s\");%s", this_func->name,
-                                            prev_ws.c_str());
+                                            whitespace.at(i - 1).c_str());
    }
 }
 
 void file::print_contents_to_file () const {
-   string prev_ws;
+   vector<string> whitespace;
    function* this_func;
    for (size_t i = 0; i < contents->size(); ++i) {
       if (contents->at(i)->func_begin) {
@@ -142,16 +149,16 @@ void file::print_contents_to_file () const {
       }
 
       if (contents->at(i)->print_header) {
-         prev_ws = handle_header (this_func, i);
+         whitespace.push_back (handle_header (this_func, i));
          continue;
       }
 
-      handle_footer (this_func, prev_ws, i);
+      handle_footer (this_func, whitespace, i);
       cout << contents->at(i)->text;
-      prev_ws = get_ws (contents->at(i)->text);
+      whitespace.push_back (get_ws (contents->at(i)->text));
    }
 }
-   
+
 //TODO actually print to a file 
 void file::print_to_file () const {
    //FILE* out_file = fopen (file_name->c_str(), "w");
@@ -173,5 +180,10 @@ void file::print_to_file () const {
 #endif //traceR\n\n");
 
    print_contents_to_file ();
+}
+
+void file::analyze () const {
+   analyzer* this_analyzer = new analyzer ();
+   this_analyzer->analyze ();
 }
 

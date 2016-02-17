@@ -1,5 +1,5 @@
 /* traceR
- * written Adam Pinarbasi
+ * written by Adam Pinarbasi
  */
 
 #include <cstdlib>
@@ -28,8 +28,7 @@ int main (int argc, char** argv) {
    vector<file*>* files = create_files (argc, argv);
    for (size_t i = 0; i < files->size(); ++i) {
       files->at(i)->bison_file();
-      //files->at(i)->flex_file();
-      files->at(i)->print_to_file();
+      files->at(i)->analyze();
    }
    delete files;
    return EXIT_SUCCESS;

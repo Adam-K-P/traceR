@@ -37,6 +37,7 @@ struct file {
    void bison_file () const;
    void print_to_file () const; 
    void print_contents_to_file () const;
+   void analyze () const;
 };
 
 //Need to be global for bison
