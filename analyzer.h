@@ -14,7 +14,7 @@ class analyzer {
       void analyze_contents ();
       void handle_header (function*, std::string, int);
       void handle_footer (function*, int);
-      void fix_footer_ws (int);
+      void fix_footer_ws (function*, int);
 
    public:
       void analyze ();

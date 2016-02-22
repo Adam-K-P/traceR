@@ -47,22 +47,31 @@ void analyzer::handle_header (function* this_func, string content, int i) {
    analyzed_contents->push_back (content); //add '{' first
    rm_trailing (this_func->name);
    string func_name (this_func->name);
+   string header_ws = get_ws (contents->at(i)->text);
+   this_func->header_ws = header_ws;
    string analyzed_content = "enter_function (\"" + func_name + "\");"
-                             + get_ws (contents->at(i)->text);
+                                                  + header_ws.c_str();
    analyzed_contents->push_back (analyzed_content);
 }
 
 static bool foot_func_check (function* this_func, int i) {
    if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
-      return false; 
-   //cout << "contents->at(i + 1)" << contents->at(i+ 1)->text << endl;
+      return false;
    if (contents->at(i + 1)->func_begin and this_func->is_void) 
       return true;
    return false;
 }
 
-//whitespace before footer is messed up in this situation
-void analyzer::fix_footer_ws (int i) {
+//removes trailing whitespace
+static void rm_trailing (string* text) {
+   while (isspace (text->at(text->size() - 1)))
+      text->at(text->size() - 1) = '\0';
+}
+
+//just use same whitespace as the header does
+void analyzer::fix_footer_ws (function* this_func, int i) {
+   rm_trailing (&(analyzed_contents->at (i)));
+   analyzed_contents->at (i) += this_func->header_ws;
 }
 
 void analyzer::handle_footer (function* this_func, int i) {
@@ -75,10 +84,10 @@ void analyzer::handle_footer (function* this_func, int i) {
    else if (not strncmp (contents->at(i)->text, "}", 1) and
                 foot_func_check (this_func, i)) {
       string func_name (this_func->name);
+      fix_footer_ws (this_func, analyzed_contents->size() - 1);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
                                 + get_ws (contents->at(i - 1)->text);
       analyzed_contents->push_back (analyzed_content);
-      fix_footer_ws (i);
    }
 }
 

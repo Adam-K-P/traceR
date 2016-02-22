@@ -22,6 +22,7 @@ struct function {
    char* name;
    std::vector<token*>* tokens;
    bool is_void; //whether the return type of the function is void
+   std::string header_ws;
 
    function ();
    ~function ();
@@ -35,8 +36,6 @@ struct file {
 
    void open_yyin () const;
    void bison_file () const;
-   void print_to_file () const; 
-   void print_contents_to_file () const;
    void analyze () const;
 };
 
