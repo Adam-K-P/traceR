@@ -70,7 +70,7 @@ QUALIFIER   ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
 
 {RETURN}{WS}*                 { RETURN (RETURN); }
 
-{ID}{WS}*                     { RETURN (ID); }
+{ID}({POINTER}|{WS})*         { RETURN (ID); }
 
 {POINTER}{WS}*                { RETURN (POINTER); }
 

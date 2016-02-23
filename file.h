@@ -23,6 +23,7 @@ struct function {
    std::vector<token*>* tokens;
    bool is_void; //whether the return type of the function is void
    std::string header_ws;
+   bool footer_printed; //has footer already been printed
 
    function ();
    ~function ();

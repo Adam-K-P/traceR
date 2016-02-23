@@ -177,6 +177,7 @@ type: INT      { $$ = $1; }
     | DOUBLE   { $$ = $1; }
     | FLOAT    { $$ = $1; }
     | LONG     { $$ = $1; }
+    | ID       { $$ = $1; }
     ;
 
 quals : quals QUALIFIER    { $$ = $$->add ($2); }

@@ -74,6 +74,7 @@ void analyzer::fix_footer_ws (function* this_func, int i) {
    analyzed_contents->at (i) += this_func->header_ws;
 }
 
+//TODO: ensure that there is always a function when referring to func_name
 void analyzer::handle_footer (function* this_func, int i) {
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name);
@@ -104,7 +105,6 @@ void analyzer::analyze_contents () {
          handle_header (this_func, content, i);
          continue;
       }
-
       handle_footer (this_func, i);
       analyzed_contents->push_back (content);
    }

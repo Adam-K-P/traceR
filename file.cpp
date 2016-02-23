@@ -45,6 +45,7 @@ function::function () {
    is_void = false;
    header_ws = "";
    name = NULL;
+   footer_printed = false;
 }
 
 function::~function () {
