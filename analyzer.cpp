@@ -64,8 +64,8 @@ static bool foot_func_check (function* this_func, int i) {
 
 //removes trailing whitespace
 static void rm_trailing (string* text) {
-   while (isspace (text->at(text->size() - 1)))
-      text->at(text->size() - 1) = '\0';
+   for (int i = text->size() - 1; isspace (text->at (i)); --i) 
+      text->erase (text->begin () + i);
 }
 
 //just use same whitespace as the header does
