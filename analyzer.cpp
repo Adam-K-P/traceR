@@ -76,6 +76,7 @@ void analyzer::fix_footer_ws (function* this_func, int i) {
 
 //TODO: ensure that there is always a function when referring to func_name
 void analyzer::handle_footer (function* this_func, int i) {
+   if (this_func->name == NULL) return; //this is not really a function
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
