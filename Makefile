@@ -4,7 +4,7 @@
 CPP     = g++ -g -O0 -Wall -Wextra -std=gnu++11 
 EXECBIN = traceR
 
-CPPSRC  = main.cpp file.cpp yylex.cpp yyparse.cpp 
+CPPSRC  = main.cpp file.cpp analyzer.cpp yylex.cpp yyparse.cpp 
 OBJECTS = ${CPPSRC:.cpp=.o} 
 
 FLEX  = flex --header-file=${LEXHDR} --outfile=${LEXCPP}
@@ -37,5 +37,12 @@ clean:
 	rm *o
 	rm traceR
 
+del:
+	rm fibb_out.c
+	rm stack_out.c
+	rm a_test_out.c
+
 test:
-	./traceR tests/fibb.c
+	./traceR tests/fibb.c > fibb_out.c
+	./traceR tests/stack.c > stack_out.c
+	./traceR tests/a_test.c > a_test_out.c
