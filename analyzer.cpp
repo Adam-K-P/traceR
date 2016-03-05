@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <queue>
 #include <stack>
 #include <string>
@@ -12,12 +13,10 @@
 using namespace std;
 
 analyzer::analyzer () {
-   analyzed_contents = new vector<string>;
+   analyzed_contents = unique_ptr<vector<string>> (new vector<string>);
 }
 
-analyzer::~analyzer () {
-   delete analyzed_contents;
-}
+analyzer::~analyzer () {}
 
 /* Gets the trailing whitespace from a string
  * so that you can add it to the beginning of the
@@ -43,18 +42,19 @@ static void rm_trailing (char* text) {
       text[strlen (text) - 1] = '\0';
 }
 
-void analyzer::handle_header (function* this_func, string content, int i) {
-   analyzed_contents->push_back (content); //add '{' first
+void analyzer::handle_header (func* this_func, string content, int i) {
+   vector<string>* analyzed_contents_ = analyzed_contents.get ();
+   analyzed_contents_->push_back (content); //add '{' first
    rm_trailing (this_func->name);
    string func_name (this_func->name);
    string header_ws = get_ws (contents->at(i)->text);
    this_func->header_ws = header_ws;
    string analyzed_content = "enter_function (\"" + func_name + "\");"
                                                   + header_ws.c_str();
-   analyzed_contents->push_back (analyzed_content);
+   analyzed_contents_->push_back (analyzed_content);
 }
 
-static bool foot_func_check (function* this_func, int i) {
+static bool foot_func_check (func* this_func, int i) {
    if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
       return false;
    if (contents->at(i + 1)->func_begin and this_func->is_void) 
@@ -69,32 +69,34 @@ static void rm_trailing (string* text) {
 }
 
 //just use same whitespace as the header does
-void analyzer::fix_footer_ws (function* this_func, int i) {
-   rm_trailing (&(analyzed_contents->at (i)));
-   analyzed_contents->at (i) += this_func->header_ws;
+void analyzer::fix_footer_ws (func* this_func, int i) {
+   vector<string>* analyzed_contents_ = analyzed_contents.get ();
+   rm_trailing (&(analyzed_contents_->at (i)));
+   analyzed_contents_->at (i) += this_func->header_ws;
 }
 
 //TODO: ensure that there is always a function when referring to func_name
-void analyzer::handle_footer (function* this_func, int i) {
+void analyzer::handle_footer (func* this_func, int i) {
+   vector<string>* analyzed_contents_ = analyzed_contents.get ();
    if (this_func->name == NULL) return; //this is not really a function
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
                                 + get_ws (contents->at(i - 1)->text);
-      analyzed_contents->push_back (analyzed_content);
+      analyzed_contents_->push_back (analyzed_content);
    }
    else if (not strncmp (contents->at(i)->text, "}", 1) and
                 foot_func_check (this_func, i)) {
       string func_name (this_func->name);
-      fix_footer_ws (this_func, analyzed_contents->size() - 1);
+      fix_footer_ws (this_func, analyzed_contents_->size() - 1);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
                                 + get_ws (contents->at(i - 1)->text);
-      analyzed_contents->push_back (analyzed_content);
+      analyzed_contents_->push_back (analyzed_content);
    }
 }
 
 void analyzer::analyze_contents () {
-   function* this_func;
+   func* this_func;
    for (size_t i = 0; i < contents->size (); ++i) {
       string content (contents->at(i)->text);
       if (contents->at(i)->func_begin) {
@@ -107,7 +109,7 @@ void analyzer::analyze_contents () {
          continue;
       }
       handle_footer (this_func, i);
-      analyzed_contents->push_back (content);
+      analyzed_contents.get()->push_back (content);
    }
 }
 
@@ -127,7 +129,7 @@ void analyzer::add_file_prefix () {
 #define leave_function(FUNCTION_NAME)\n\n\
 #endif //traceR\n\n";
 
-   analyzed_contents->push_back (prefix);
+   analyzed_contents.get()->push_back (prefix);
 }
 
 void analyzer::analyze () {

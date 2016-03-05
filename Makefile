@@ -1,7 +1,7 @@
 # Adam Pinarbasi
 # Makefile for traceR
 
-CPP     = g++ -g -O0 -Wall -Wextra -std=gnu++11 
+CPP     = g++ -g -O0 -Wall -Wextra -std=c++1y
 EXECBIN = traceR
 
 CPPSRC  = main.cpp file.cpp analyzer.cpp yylex.cpp yyparse.cpp 

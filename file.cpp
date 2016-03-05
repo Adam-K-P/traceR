@@ -16,7 +16,7 @@
 using namespace std;
 
 vector<token*>* contents;
-queue<function*>* functions;
+queue<func*>* functions;
 
 token::token (char* this_text) { 
    print_footer = false;
@@ -40,7 +40,7 @@ token* token::add (token* that_tok) {
    return the_tok;
 }
 
-function::function () {
+func::func () {
    tokens = new vector<token*>;
    is_void = false;
    header_ws = "";
@@ -48,7 +48,7 @@ function::function () {
    footer_printed = false;
 }
 
-function::~function () {
+func::~func () {
    delete tokens;
    if (name != NULL)
       free (name);
@@ -56,7 +56,7 @@ function::~function () {
 
 file::file () {
    contents = new vector<token*>;
-   functions = new queue<function*>;
+   functions = new queue<func*>;
 }
 
 file::~file () {
@@ -64,7 +64,7 @@ file::~file () {
    contents = nullptr;
    delete temp;
 
-   queue<function*>* temp2 = functions;
+   queue<func*>* temp2 = functions;
    functions = nullptr;
    delete temp2;
 

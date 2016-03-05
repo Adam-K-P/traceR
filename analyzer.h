@@ -1,6 +1,7 @@
 #ifndef __ANALYZER_H
 #define __ANALYZER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -9,12 +10,12 @@
 class analyzer {
 
    private:
-      std::vector<std::string>* analyzed_contents;
+      std::unique_ptr<std::vector<std::string>> analyzed_contents;
       void add_file_prefix ();
       void analyze_contents ();
-      void handle_header (function*, std::string, int);
-      void handle_footer (function*, int);
-      void fix_footer_ws (function*, int);
+      void handle_header (func*, std::string, int);
+      void handle_footer (func*, int);
+      void fix_footer_ws (func*, int);
 
    public:
       void analyze ();

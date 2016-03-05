@@ -18,15 +18,15 @@ struct token {
    token* add (token*);
 };
 
-struct function {
+struct func {
    char* name;
    std::vector<token*>* tokens;
    bool is_void; //whether the return type of the function is void
    std::string header_ws;
    bool footer_printed; //has footer already been printed
 
-   function ();
-   ~function ();
+   func ();
+   ~func ();
 };
 
 struct file {
@@ -42,7 +42,7 @@ struct file {
 
 //Need to be global for bison
 extern std::vector<token*>* contents;
-extern std::queue<function*>* functions;
+extern std::queue<func*>* functions;
 
 #define YYSTYPE token*
 
