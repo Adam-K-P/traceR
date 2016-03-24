@@ -43,19 +43,18 @@ static void rm_trailing (char* text) {
       text[strlen (text) - 1] = '\0';
 }
 
-void analyzer::handle_header (func* this_func, string content, int i) {
-   vector<string>* analyzed_contents_ = analyzed_contents.get ();
-   analyzed_contents_->push_back (content); //add '{' first
+void analyzer::handle_header (const sp_func& this_func, string content, int i) {
+   analyzed_contents->push_back (content); //add '{' first
    rm_trailing (this_func->name);
    string func_name (this_func->name);
    up_string header_ws = get_ws (contents->at(i)->text);
    string analyzed_content = "enter_function (\"" + func_name + "\");"
                                                   + header_ws->c_str();
    this_func->header_ws = move (header_ws);
-   analyzed_contents_->push_back (analyzed_content);
+   analyzed_contents->push_back (analyzed_content);
 }
 
-static bool foot_func_check (func* this_func, int i) {
+static bool foot_func_check (const sp_func& this_func, int i) {
    if (contents->size() == (size_t)(i + 1)) //ensure not last index in contents
       return false;
    if (contents->at(i + 1)->func_begin and this_func->is_void) 
@@ -70,14 +69,14 @@ static void rm_trailing (string* text) {
 }
 
 //just use same whitespace as the header does
-void analyzer::fix_footer_ws (func* this_func, int i) {
-   vector<string>* analyzed_contents_ = analyzed_contents.get ();
-   rm_trailing (&(analyzed_contents_->at (i)));
-   analyzed_contents_->at (i) += *(this_func->header_ws);
+void analyzer::fix_footer_ws (const sp_func& this_func, int i) {
+   rm_trailing (&(analyzed_contents->at (i)));
+   analyzed_contents->at (i) += *(this_func->header_ws);
 }
 
 //TODO: ensure that there is always a function when referring to func_name
-void analyzer::handle_footer (func* this_func, int i) {
+void analyzer::handle_footer (const sp_func& this_func, int i) {
+   if (this_func.get () == nullptr) return;
    if (this_func->name == NULL) return; //this is not really a function
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name);
@@ -96,7 +95,7 @@ void analyzer::handle_footer (func* this_func, int i) {
 }
 
 void analyzer::analyze_contents () {
-   func* this_func;
+   sp_func this_func = sp_func (nullptr);
    for (size_t i = 0; i < contents->size (); ++i) {
       string content (contents->at(i)->text);
       if (contents->at(i)->func_begin) {
@@ -105,10 +104,10 @@ void analyzer::analyze_contents () {
       }
 
       if (contents->at(i)->print_header) {
-         handle_header (this_func, content, i);
+         handle_header (this_func, content, i); //!!!
          continue;
       }
-      handle_footer (this_func, i);
+      handle_footer (this_func, i); //!!!
       analyzed_contents.get()->push_back (content);
    }
 }

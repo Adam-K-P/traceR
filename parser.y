@@ -118,7 +118,7 @@ function : quals type ID params '{'
                                        contents->push_back ($4);
                                        contents->push_back ($5);
 
-                                       func* this_func = new func();
+                                       sp_func this_func = sp_func (new func);
                                        this_func->tokens->push_back ($1);
                                        this_func->tokens->push_back ($2);
                                        this_func->tokens->push_back ($3);
@@ -135,7 +135,7 @@ function : quals type ID params '{'
                                        contents->push_back ($3);
                                        contents->push_back ($4);
 
-                                       func* this_func = new func();
+                                       sp_func this_func = sp_func (new func);
                                        if ($1->void_func) 
                                           this_func->is_void = true;
                                        this_func->tokens->push_back ($1);

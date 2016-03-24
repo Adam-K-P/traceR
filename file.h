@@ -13,11 +13,11 @@ struct file;
 using up_string = std::unique_ptr<std::string>;
 
 using up_tok = std::unique_ptr<token>;
-using up_func = std::unique_ptr<func>;
+using sp_func = std::shared_ptr<func>;
 using up_file = std::unique_ptr<file>;
 
 using up_vec_file = std::unique_ptr<std::vector<up_file>>;
-using up_que_func = std::unique_ptr<std::queue<up_func>>;
+using up_que_func = std::unique_ptr<std::queue<sp_func>>;
 using up_vec_tok = std::unique_ptr<std::vector<up_tok>>;
 
 struct token {
@@ -57,7 +57,7 @@ struct file {
 
 //Need to be global for bison
 extern std::vector<token*>* contents;
-extern std::queue<func*>* functions;
+extern up_que_func functions;
 
 #define YYSTYPE token*
 

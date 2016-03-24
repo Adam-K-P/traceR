@@ -17,7 +17,7 @@
 using namespace std;
 
 vector<token*>* contents;
-queue<func*>* functions;
+up_que_func functions;
 
 token::token (const char* this_text) { 
    print_footer = false;
@@ -57,17 +57,13 @@ func::~func () {
 
 file::file () {
    contents = new vector<token*>;
-   functions = new queue<func*>;
+   functions = up_que_func (new queue<sp_func>);
 }
 
 file::~file () {
    vector<token*>* temp = contents;
    contents = nullptr;
    delete temp;
-
-   queue<func*>* temp2 = functions;
-   functions = nullptr;
-   delete temp2;
 }
 
 void file::bison_file () const {

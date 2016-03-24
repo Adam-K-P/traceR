@@ -13,9 +13,9 @@ class analyzer {
       std::unique_ptr<std::vector<std::string>> analyzed_contents;
       void add_file_prefix ();
       void analyze_contents ();
-      void handle_header (func*, std::string, int);
-      void handle_footer (func*, int);
-      void fix_footer_ws (func*, int);
+      void handle_header (const sp_func&, std::string, int);
+      void handle_footer (const sp_func&, int);
+      void fix_footer_ws (const sp_func&, int);
 
    public:
       void analyze ();
