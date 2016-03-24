@@ -1,9 +1,24 @@
 #ifndef __FILE_H
 #define __FILE_H
 
+#include <memory>
 #include <queue>
 #include <string>
 #include <vector>
+
+struct token;
+struct func;
+struct file;
+
+using up_string = std::unique_ptr<std::string>;
+
+using up_tok = std::unique_ptr<token>;
+using up_func = std::unique_ptr<func>;
+using up_file = std::unique_ptr<file>;
+
+using up_vec_file = std::unique_ptr<std::vector<up_file>>;
+using up_que_func = std::unique_ptr<std::queue<up_func>>;
+using up_vec_tok = std::unique_ptr<std::vector<up_tok>>;
 
 struct token {
    char* text;
@@ -30,7 +45,7 @@ struct func {
 };
 
 struct file {
-   std::string* file_name;
+   up_string file_name;
 
    file ();
    ~file ();

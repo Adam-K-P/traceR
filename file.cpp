@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <queue>
 #include <stack>
 #include <string>
@@ -67,8 +68,6 @@ file::~file () {
    queue<func*>* temp2 = functions;
    functions = nullptr;
    delete temp2;
-
-   delete file_name;
 }
 
 void file::bison_file () const {

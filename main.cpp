@@ -11,14 +11,12 @@
 
 using namespace std;
 
-using up_file = unique_ptr<file>;
-using up_vec_file = unique_ptr<vector<up_file>>;
-
 static up_vec_file create_files (int argc, char** argv) {
    up_vec_file files = up_vec_file (new vector<up_file>);
    for (int i = 1; i < argc; ++i) {
       up_file this_file = up_file (new file);
-      this_file->file_name = new string (argv[i]); 
+      this_file->file_name = up_string (new string (argv[i]));
+      //this_file->file_name = new string (argv[i]); 
       //^^^^^^this will need to be changed when file.cpp is updated
       files->push_back (move (this_file));
    }
