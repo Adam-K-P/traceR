@@ -19,7 +19,7 @@ using namespace std;
 vector<token*>* contents;
 queue<func*>* functions;
 
-token::token (char* this_text) { 
+token::token (const char* this_text) { 
    print_footer = false;
    print_header = false;
    func_begin   = false;
@@ -44,7 +44,7 @@ token* token::add (token* that_tok) {
 func::func () {
    tokens = new vector<token*>;
    is_void = false;
-   header_ws = "";
+   header_ws = up_string (nullptr);
    name = NULL;
    footer_printed = false;
 }

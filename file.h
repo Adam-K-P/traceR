@@ -27,7 +27,7 @@ struct token {
    bool func_begin; //first token of a function
    bool void_func; //first token of void function
 
-   token (char*);
+   token (const char*);
    ~token ();
 
    token* add (token*);
@@ -37,7 +37,7 @@ struct func {
    char* name;
    std::vector<token*>* tokens;
    bool is_void; //whether the return type of the function is void
-   std::string header_ws;
+   up_string header_ws;
    bool footer_printed; //has footer already been printed
 
    func ();

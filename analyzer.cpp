@@ -21,8 +21,8 @@ analyzer::~analyzer () {}
 /* Gets the trailing whitespace from a string
  * so that you can add it to the beginning of the
  * appropriate string */
-static string get_ws (char* content) {
-   string* ws = new string();
+static up_string get_ws (char* content) {
+   string ws = "";
    stack<char> rev; //end up reversing whitespace string twice
    for (int i = strlen (content) - 1; i >= 0; --i) {
       if (isspace ((int)content[i])) 
@@ -30,10 +30,11 @@ static string get_ws (char* content) {
       else break; 
    }
    while (not rev.empty()) {
-      *ws += rev.top();
+      ws += rev.top();
       rev.pop();
    }
-   return *ws;
+   up_string ws_ = up_string (new string (ws));
+   return ws_;
 }
 
 //remove trailing whitespace
@@ -47,10 +48,10 @@ void analyzer::handle_header (func* this_func, string content, int i) {
    analyzed_contents_->push_back (content); //add '{' first
    rm_trailing (this_func->name);
    string func_name (this_func->name);
-   string header_ws = get_ws (contents->at(i)->text);
-   this_func->header_ws = header_ws;
+   up_string header_ws = get_ws (contents->at(i)->text);
    string analyzed_content = "enter_function (\"" + func_name + "\");"
-                                                  + header_ws.c_str();
+                                                  + header_ws->c_str();
+   this_func->header_ws = move (header_ws);
    analyzed_contents_->push_back (analyzed_content);
 }
 
@@ -72,26 +73,25 @@ static void rm_trailing (string* text) {
 void analyzer::fix_footer_ws (func* this_func, int i) {
    vector<string>* analyzed_contents_ = analyzed_contents.get ();
    rm_trailing (&(analyzed_contents_->at (i)));
-   analyzed_contents_->at (i) += this_func->header_ws;
+   analyzed_contents_->at (i) += *(this_func->header_ws);
 }
 
 //TODO: ensure that there is always a function when referring to func_name
 void analyzer::handle_footer (func* this_func, int i) {
-   vector<string>* analyzed_contents_ = analyzed_contents.get ();
    if (this_func->name == NULL) return; //this is not really a function
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + get_ws (contents->at(i - 1)->text);
-      analyzed_contents_->push_back (analyzed_content);
+                                + *(get_ws (contents->at(i - 1)->text));
+      analyzed_contents->push_back (analyzed_content);
    }
    else if (not strncmp (contents->at(i)->text, "}", 1) and
                 foot_func_check (this_func, i)) {
       string func_name (this_func->name);
-      fix_footer_ws (this_func, analyzed_contents_->size() - 1);
+      fix_footer_ws (this_func, analyzed_contents->size() - 1);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + get_ws (contents->at(i - 1)->text);
-      analyzed_contents_->push_back (analyzed_content);
+                                + *(get_ws (contents->at(i - 1)->text));
+      analyzed_contents->push_back (analyzed_content);
    }
 }
 
