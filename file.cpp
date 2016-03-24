@@ -61,7 +61,7 @@ void file::bison_file () const {
 }
 
 void file::analyze () const {
-   analyzer* this_analyzer = new analyzer ();
+   unique_ptr<analyzer> this_analyzer = unique_ptr<analyzer> (new analyzer);
    this_analyzer->analyze ();
 }
 

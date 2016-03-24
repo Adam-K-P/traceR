@@ -81,7 +81,8 @@ void analyzer::handle_footer (const sp_func& this_func, int i) {
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name->c_str ());
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1)->text->c_str ()));
+                                + *(get_ws (contents->at(i - 1)
+                                                    ->text->c_str ()));
       analyzed_contents->push_back (analyzed_content);
    }
    else if (not strncmp (contents->at(i)->text->c_str (), "}", 1) and
@@ -89,7 +90,8 @@ void analyzer::handle_footer (const sp_func& this_func, int i) {
       string func_name (this_func->name->c_str ());
       fix_footer_ws (this_func, analyzed_contents->size() - 1);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1)->text->c_str ()));
+                                + *(get_ws (contents->at(i - 1)
+                                                    ->text->c_str ()));
       analyzed_contents->push_back (analyzed_content);
    }
 }
