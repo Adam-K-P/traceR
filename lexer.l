@@ -3,10 +3,10 @@
 #include "file.h"
 #include "yyparse.h"
 
-extern token* yylval;
+extern sp_tok yylval;
 
 #define RETURN(SYMBOL) do { \
-   yylval = new token (yytext); \
+   yylval = sp_tok (new token (yytext)); \
    return SYMBOL; \
 } while(0)
 

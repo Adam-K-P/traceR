@@ -16,7 +16,7 @@
 
 using namespace std;
 
-vector<token*>* contents;
+up_vec_tok contents;
 up_que_func functions;
 
 token::token (const char* this_text) { 
@@ -32,17 +32,16 @@ token::~token () {
       free (text);
 }
 
-token* token::add (token* that_tok) {
+sp_tok token::add (const sp_tok& that_tok) const {
    string this_str(text);
    string that_str(that_tok->text);
    string the_str(this_str + that_str);
-   token* the_tok = new token((char*)the_str.c_str());
-   delete that_tok;
+   sp_tok the_tok = sp_tok (new token((char*)the_str.c_str()));
    return the_tok;
 }
 
 func::func () {
-   tokens = new vector<token*>;
+   tokens = up_vec_tok (new vector<sp_tok>);
    is_void = false;
    header_ws = up_string (nullptr);
    name = NULL;
@@ -50,21 +49,16 @@ func::func () {
 }
 
 func::~func () {
-   delete tokens;
    if (name != NULL)
       free (name);
 }
 
 file::file () {
-   contents = new vector<token*>;
+   contents = up_vec_tok (new vector<sp_tok>);
    functions = up_que_func (new queue<sp_func>);
 }
 
-file::~file () {
-   vector<token*>* temp = contents;
-   contents = nullptr;
-   delete temp;
-}
+file::~file () {}
 
 void file::bison_file () const {
    yyin = fopen (file_name->c_str(), "r");
