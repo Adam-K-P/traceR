@@ -24,34 +24,26 @@ token::token (const char* this_text) {
    print_header = false;
    func_begin   = false;
    void_func    = false;
-   text = strdup(this_text);
+   text = up_string (new string (this_text));
 }
 
-token::~token () {
-   if (text != NULL)
-      free (text);
-}
+token::~token () {}
 
 sp_tok token::add (const sp_tok& that_tok) const {
-   string this_str(text);
-   string that_str(that_tok->text);
-   string the_str(this_str + that_str);
-   sp_tok the_tok = sp_tok (new token((char*)the_str.c_str()));
+   string this_str = *text + *(that_tok->text);
+   sp_tok the_tok = sp_tok (new token(this_str.c_str ()));
    return the_tok;
 }
 
 func::func () {
    tokens = up_vec_tok (new vector<sp_tok>);
-   is_void = false;
    header_ws = up_string (nullptr);
-   name = NULL;
+   name = up_string (nullptr);
+   is_void = false;
    footer_printed = false;
 }
 
-func::~func () {
-   if (name != NULL)
-      free (name);
-}
+func::~func () {}
 
 file::file () {
    contents = up_vec_tok (new vector<sp_tok>);

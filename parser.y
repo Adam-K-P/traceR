@@ -124,7 +124,8 @@ function : quals type ID params '{'
                                        this_func->tokens->push_back ($3);
                                        this_func->tokens->push_back ($4);
                                        this_func->tokens->push_back ($5);
-                                       this_func->name = $3->text;
+                                       this_func->name = up_string 
+                                                         (new string ($3->text->c_str ()));
                                        functions->push (this_func);
                                      }
          | type ID params '{'        { function_mac ("TYPE ID params");
@@ -142,7 +143,8 @@ function : quals type ID params '{'
                                        this_func->tokens->push_back ($2);
                                        this_func->tokens->push_back ($3);
                                        this_func->tokens->push_back ($4);
-                                       this_func->name = $2->text;
+                                       this_func->name = up_string 
+                                                         (new string ($2->text->c_str ()));
                                        functions->push (this_func);
                                      }
          | quals type error          { function_mac ("quals TYPE error");

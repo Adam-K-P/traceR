@@ -21,7 +21,7 @@ using up_que_func = std::unique_ptr<std::queue<sp_func>>;
 using up_vec_tok = std::unique_ptr<std::vector<sp_tok>>;
 
 struct token {
-   char* text;
+   up_string text;
    bool print_header; //whether to print out start macro after this token
    bool print_footer; //whether to print out exit macro after this token
    bool func_begin; //first token of a function
@@ -34,9 +34,8 @@ struct token {
 };
 
 struct func {
-   char* name;
+   up_string name;
    up_vec_tok tokens;
-   //std::vector<token*>* tokens;
    bool is_void; //whether the return type of the function is void
    up_string header_ws;
    bool footer_printed; //has footer already been printed
