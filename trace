@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+sub usage {
+   print "Usage: trace [file.c]\n";
+   exit;
+}
+
+sub trace {
+   my $file = shift;
+   my $original_file = "old_" . $file;
+   system "cp $file $original_file";
+   system "traceR $file > $file";
+}
+
+sub main {
+   for my $file (@ARGV) {
+      usage () unless ($file =~ /\.c$/); 
+      trace ($file);
+   }
+}
+
+main ();
