@@ -18,6 +18,22 @@ analyzer::analyzer () {
 
 analyzer::~analyzer () {}
 
+static up_string get_ws (const up_string& content) {
+   string ws = "";
+   stack<char> rev; //end up reversing whitespace string twice
+   for (int i = content->size () - 1; i >= 0; --i) {
+      if (isspace ((int) content->at (i)))
+         rev.push (content->at (i));
+      else break;
+   }
+   while (not rev.empty ()) {
+      ws += rev.top ();
+      rev.pop ();
+   }
+   up_string ws_ = up_string (new string (ws));
+   return ws_;
+}
+
 /* Gets the trailing whitespace from a string
  * so that you can add it to the beginning of the
  * appropriate string */
@@ -47,7 +63,7 @@ void analyzer::handle_header (const sp_func& this_func, string content, int i) {
    analyzed_contents->push_back (content); //add '{' first
    rm_trailing ((char*) this_func->name->c_str ());
    string func_name (this_func->name->c_str ());
-   up_string header_ws = get_ws (contents->at(i)->text->c_str ());
+   up_string header_ws = get_ws (contents->at(i)->text);
    string analyzed_content = "enter_function (\"" + func_name + "\");"
                                                   + header_ws->c_str();
    this_func->header_ws = move (header_ws);
@@ -77,12 +93,11 @@ void analyzer::fix_footer_ws (const sp_func& this_func, int i) {
 //TODO: ensure that there is always a function when referring to func_name
 void analyzer::handle_footer (const sp_func& this_func, int i) {
    if (this_func.get () == nullptr) return;
-   if (this_func->name.get () == nullptr) return; //this is not really a function
+   if (this_func->name.get () == nullptr) return; //this isn't really a function
    if (contents->at(i)->print_footer) {
       string func_name (this_func->name->c_str ());
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1)
-                                                    ->text->c_str ()));
+                                + *(get_ws (contents->at(i - 1) ->text));
       analyzed_contents->push_back (analyzed_content);
    }
    else if (not strncmp (contents->at(i)->text->c_str (), "}", 1) and
@@ -90,8 +105,7 @@ void analyzer::handle_footer (const sp_func& this_func, int i) {
       string func_name (this_func->name->c_str ());
       fix_footer_ws (this_func, analyzed_contents->size() - 1);
       string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1)
-                                                    ->text->c_str ()));
+                                + *(get_ws (contents->at(i - 1) ->text));
       analyzed_contents->push_back (analyzed_content);
    }
 }
@@ -106,10 +120,10 @@ void analyzer::analyze_contents () {
       }
 
       if (contents->at(i)->print_header) {
-         handle_header (this_func, content, i); //!!!
+         handle_header (this_func, content, i);
          continue;
       }
-      handle_footer (this_func, i); //!!!
+      handle_footer (this_func, i);
       analyzed_contents.get()->push_back (content);
    }
 }
@@ -130,7 +144,7 @@ void analyzer::add_file_prefix () {
 #define leave_function(FUNCTION_NAME)\n\n\
 #endif //traceR\n\n";
 
-   analyzed_contents.get()->push_back (prefix);
+   analyzed_contents->push_back (prefix);
 }
 
 void analyzer::analyze () {
