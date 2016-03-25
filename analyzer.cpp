@@ -18,6 +18,9 @@ analyzer::analyzer () {
 
 analyzer::~analyzer () {}
 
+/* Gets the trailing whitespace from a string
+ * so that you can add it to the beginning of the
+ * appropriate string */
 static up_string get_ws (const up_string& content) {
    string ws = "";
    stack<char> rev; //end up reversing whitespace string twice
@@ -34,32 +37,15 @@ static up_string get_ws (const up_string& content) {
    return ws_;
 }
 
-/* Gets the trailing whitespace from a string
- * so that you can add it to the beginning of the
- * appropriate string */
-static up_string get_ws (const char* content) {
-   string ws = "";
-   stack<char> rev; //end up reversing whitespace string twice
-   for (int i = strlen (content) - 1; i >= 0; --i) {
-      if (isspace ((int)content[i])) 
-         rev.push (content[i]);
-      else break; 
-   }
-   while (not rev.empty()) {
-      ws += rev.top();
-      rev.pop();
-   }
-   up_string ws_ = up_string (new string (ws));
-   return ws_;
-}
-
 //remove trailing whitespace
 static void rm_trailing (char* text) {
    while (isspace (text[strlen (text) - 1]))
       text[strlen (text) - 1] = '\0';
 }
 
-void analyzer::handle_header (const sp_func& this_func, string content, int i) {
+void analyzer::handle_header (const sp_func& this_func, 
+                              const string& content, 
+                              int i) {
    analyzed_contents->push_back (content); //add '{' first
    rm_trailing ((char*) this_func->name->c_str ());
    string func_name (this_func->name->c_str ());
@@ -90,23 +76,23 @@ void analyzer::fix_footer_ws (const sp_func& this_func, int i) {
    analyzed_contents->at (i) += *(this_func->header_ws);
 }
 
+void analyzer::add_content (const sp_func& this_func, int i) {
+   string func_name (this_func->name->c_str ());
+   string analyzed_content = "leave_function (\"" + func_name + "\");"
+                           + *(get_ws (contents->at(i - 1)->text));
+   analyzed_contents->push_back (analyzed_content);
+}
+
 //TODO: ensure that there is always a function when referring to func_name
 void analyzer::handle_footer (const sp_func& this_func, int i) {
    if (this_func.get () == nullptr) return;
    if (this_func->name.get () == nullptr) return; //this isn't really a function
-   if (contents->at(i)->print_footer) {
-      string func_name (this_func->name->c_str ());
-      string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1) ->text));
-      analyzed_contents->push_back (analyzed_content);
-   }
+   if (contents->at(i)->print_footer) 
+      add_content (this_func, i);
    else if (not strncmp (contents->at(i)->text->c_str (), "}", 1) and
                 foot_func_check (this_func, i)) {
-      string func_name (this_func->name->c_str ());
       fix_footer_ws (this_func, analyzed_contents->size() - 1);
-      string analyzed_content = "leave_function (\"" + func_name + "\");"
-                                + *(get_ws (contents->at(i - 1) ->text));
-      analyzed_contents->push_back (analyzed_content);
+      add_content (this_func, i);
    }
 }
 

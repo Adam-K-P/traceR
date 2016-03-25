@@ -11,23 +11,17 @@
 
 using namespace std;
 
-static up_vec_file create_files (int argc, char** argv) {
-   up_vec_file files = up_vec_file (new vector<up_file>);
-   for (int i = 1; i < argc; ++i) {
-      up_file this_file = up_file (new file);
-      this_file->file_name = up_string (new string (argv[i]));
-      //this_file->file_name = new string (argv[i]); 
-      //^^^^^^this will need to be changed when file.cpp is updated
-      files->push_back (move (this_file));
-   }
-   return files;
+static void usage () {
+   cout << "Usage: traceR [file]" << endl;
+   exit (EXIT_FAILURE);
 }
 
 int main (int argc, char** argv) {
-   up_vec_file files = create_files (argc, argv);
-   for (size_t i = 0; i < files->size (); ++i) {
-      files->at(i)->bison_file ();
-      files->at(i)->analyze ();
-   }
+   if (argc != 2) 
+      usage ();
+   up_file this_file = up_file (new file);
+   this_file->file_name = up_string (new string (argv[1]));
+   this_file->bison_file ();
+   this_file->analyze ();
    return EXIT_SUCCESS;
 }
