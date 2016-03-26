@@ -46,3 +46,7 @@ test:
 	./traceR tests/fibb.c > fibb_out.c
 	./traceR tests/stack.c > stack_out.c
 	./traceR tests/a_test.c > a_test_out.c
+
+install: all
+	sudo cp traceR /usr/bin/
+	make clean
