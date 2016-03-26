@@ -3,22 +3,37 @@
 use strict;
 use warnings;
 
+use File::Basename;
+
+sub wrong_suffix {
+   print "Must run trace on a c file (with suffix .c)\n";
+   exit;
+}
+
 sub usage {
-   print "Usage: trace [file.c]\n";
+   print "Usage: trace [files.c]\n";
    exit;
 }
 
 sub trace {
-   my $file = shift;
-   my $original_file = "old_" . $file;
-   system "cp $file $original_file";
-   system "traceR $file > $file";
+   my $filename = shift;
+   my $dirs = shift;
+   wrong_suffix () unless ($filename =~ /\.c$/);
+   my $old_file = "old_" . $filename;
+   my $new_file = "new_" . $filename; #acts as a buffer file
+   system "cp $dirs$filename $dirs$old_file";
+   system "traceR $dirs$filename > $dirs$new_file";
+   system "rm $dirs$filename";
+   system "mv $dirs$new_file $dirs$filename";
 }
 
 sub main {
-   for my $file (@ARGV) {
-      usage () unless ($file =~ /\.c$/); 
-      trace ($file);
+   usage () unless (scalar @ARGV > 0);   
+   for my $path (@ARGV) {
+      my $filename;
+      my $dirs;
+      ($filename, $dirs) = fileparse $path;
+      trace $filename, $dirs;
    }
 }
 
