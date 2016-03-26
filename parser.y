@@ -72,10 +72,11 @@ using namespace std;
 %error-verbose
 %token-table
 %verbose
+%expect 2
 
 %token NUMBER ID STRUCT RETURN
        POINTER ARRAY QUALIFIER  
-       INT VOID CHAR DOUBLE FLOAT LONG 
+       INT VOID CHAR DOUBLE FLOAT LONG COMMENT
        '{' '}' '(' ')' ',' '#' ';' 
 
 %start start
@@ -90,6 +91,7 @@ program : program function     { }
         | program error        { error_mac; contents->push_back ($2); 
                                  yyclearin; // squashed the bug ;-)
                                }
+        | program COMMENT      { contents->push_back ($2); }
         |                      { }
         ;
 
@@ -125,7 +127,8 @@ function : quals type ID params '{'
                                        this_func->tokens->push_back ($4);
                                        this_func->tokens->push_back ($5);
                                        this_func->name = up_string 
-                                                         (new string ($3->text->c_str ()));
+                                                         (new string 
+                                                            (*($3->text)));
                                        functions->push (this_func);
                                      }
          | type ID params '{'        { function_mac ("TYPE ID params");
@@ -144,7 +147,8 @@ function : quals type ID params '{'
                                        this_func->tokens->push_back ($3);
                                        this_func->tokens->push_back ($4);
                                        this_func->name = up_string 
-                                                         (new string ($2->text->c_str ()));
+                                                         (new string 
+                                                            (*($2->text)));
                                        functions->push (this_func);
                                      }
          | quals type error          { function_mac ("quals TYPE error");

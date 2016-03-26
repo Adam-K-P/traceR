@@ -24,6 +24,8 @@ using namespace std;
 %option verbose
 %option warn
 
+%x C_COMMENT
+
 LETTER      [A-Za-z_]
 NUMBER      [0-9]
 ID          ({LETTER}|{NUMBER})+
@@ -43,10 +45,17 @@ RETURN      "return"
 POINTER     "*"
 ARRAY       "[]"
 WS          [ \t\n] 
+COMMENT     "//".*
 
 QUALIFIER   ({CONST}|{STATIC}|{INLINE}|{VOLATILE}|{EXTERN})
 
 %%
+
+"/*"                          { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/"               { BEGIN(INITIAL); }
+<C_COMMENT>[.\n]*             { RETURN (COMMENT); }
+
+{COMMENT}{WS}*                { RETURN (COMMENT); }
 
 {NUMBER}{WS}*                 { RETURN (NUMBER); }
 
