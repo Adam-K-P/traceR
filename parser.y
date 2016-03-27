@@ -10,61 +10,8 @@
 
 void yyerror (const char*);
 
-/* Lots of debug macros below */
-
-/* enable/disable debug macros here */
-//#define debug_error
-//#define debug_function
-//#define debug_params
-//#define debug_decls
-//#define debug_body
-
-#ifdef debug_error
-
-#define error_mac do { \
-   cout << "error: " << yytext << endl; \
-} while (0)
-
-#else
-#define error_mac
-#endif //debug_error
-
-
-#ifdef debug_function
-#define function_mac(FUNCTION) do { \
-   printf ("%s\n", FUNCTION);\
-} while (0);
-#else 
-#define function_mac(FUNCTION)
-#endif //debug_function
-
-
-#ifdef debug_params
-#define params_mac(PARAMS) do { \
-   printf ("%s: %s\n", PARAMS, yytext); \
-} while (0);
-#else 
-#define params_mac(PARAMS)
-#endif //debug_params
-
-
-#ifdef debug_decls
-#define decls_mac(DECLS) do { \
-   printf ("%s: %s\n", DECLS, yytext); \
-} while (0);
-#else
-#define decls_mac(DECLS)
-#endif //debug_decls
-
-#ifdef debug_body
-#define body_mac(BODY) do { \
-   printf ("%s: %s", BODY, yytext); \
-} while (0);
-#else
-#define body_mac
-#endif //debug_body
-
 using namespace std;
+
 %}
 
 %debug
@@ -88,7 +35,7 @@ start : program
 
 program : program function     { } 
         | program return       { } 
-        | program error        { error_mac; contents->push_back ($2); 
+        | program error        { contents->push_back ($2); 
                                  yyclearin; // squashed the bug ;-)
                                }
         | program COMMENT      { contents->push_back ($2); }
@@ -109,10 +56,51 @@ return : RETURN ID             { contents->push_back ($1);
                                }
        ;
 
+new_function : idseq new_params '{'  
+                                     { cout << "matched new_function" << endl;
+                                       $3->print_header = true;
+                                       contents->push_back ($1);
+                                       contents->push_back ($2);
+                                       contents->push_back ($3);
+                                 
+                                       sp_func this_func = sp_func (new func);
+                                       this_func->tokens->push_back ($1);
+                                       this_func->tokens->push_back ($2);
+                                       this_func->tokens->push_back ($3);
+                                       this_func->name = up_string 
+                                                         (new string ("yo"));
+                                       functions->push (this_func);
+                                     }
+         ;
+
+idseq : ID ID idseq_ { $1->func_begin = true;
+                       $$ = $1->add ($2);
+                       $$ = $$->add ($3);
+                     }
+      | ID ID        { $1->func_begin = true;
+                       $$ = $1->add ($2); 
+                     }
+
+      ;
+
+idseq_ : idseq_ ID   { $$ = $$->add ($2); }
+       | ID          { $$ = $1; }
+       ;
+
+new_params : '(' paramlist ')' { $$ = $1->add ($2);
+                                 $$ = $$->add ($3);
+                               }
+           | '(' ')'           { $$ = $1->add ($2); }
+           ;
+
+paramlist : paramlist ',' idseq { $$ = $$->add ($2);
+                                  $$ = $$->add ($3);
+                                }
+          | idseq               { $$ = $1; }
+          ;
+
 function : quals type ID params '{'
-                                     { function_mac 
-                                          ("quals TYPE ID params");
-                                       $1->func_begin = true;
+                                     { $1->func_begin = true;
                                        $5->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
@@ -131,8 +119,7 @@ function : quals type ID params '{'
                                                             (*($3->text)));
                                        functions->push (this_func);
                                      }
-         | type ID params '{'        { function_mac ("TYPE ID params");
-                                       $1->func_begin = true;
+         | type ID params '{'        { $1->func_begin = true;
                                        $4->print_header = true;
                                        contents->push_back ($1);
                                        contents->push_back ($2);
@@ -151,26 +138,22 @@ function : quals type ID params '{'
                                                             (*($2->text)));
                                        functions->push (this_func);
                                      }
-         | quals type error          { function_mac ("quals TYPE error");
-                                       contents->push_back ($1);
+         | quals type error          { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);  
                                        yyclearin;
                                      }
-         | quals type ID error       { function_mac ("quals TYPE ID error");
-                                       contents->push_back ($1);
+         | quals type ID error       { contents->push_back ($1);
                                        contents->push_back ($2);
                                        contents->push_back ($3);
                                        contents->push_back ($4);
                                        yyclearin;
                                      }
-         | type error                { function_mac ("TYPE error"); 
-                                       contents->push_back ($1);
+         | type error                { contents->push_back ($1);
                                        contents->push_back ($2);
                                        yyclearin; 
                                      }
-         | type ID error             { function_mac ("TYPE ID error"); 
-                                       contents->push_back ($1);
+         | type ID error             { contents->push_back ($1);
                                        contents->push_back ($2); 
                                        contents->push_back ($3);
                                        yyclearin;
@@ -190,29 +173,23 @@ quals : quals QUALIFIER    { $$ = $$->add ($2); }
       | QUALIFIER          { $$ = $1; }
       ;
 
-params : '(' decls ')' { params_mac ("params with decls");
-                         $$ = $1->add ($2);
+params : '(' decls ')' { $$ = $1->add ($2);
                          $$ = $$->add ($3);
                        }
-       | '(' ')'       { params_mac ("params no decls");
-                         $$ = $1->add ($2); 
+       | '(' ')'       { $$ = $1->add ($2); 
                        }
        ;
 
-decls : decls ',' decl { decls_mac ("matching decls");
-                         $$ = $$->add ($2);
+decls : decls ',' decl { $$ = $$->add ($2);
                          $$ = $$->add ($3);
                        }
-      | decl           { decls_mac ("matching decl");
-                         $$ = $1; 
+      | decl           { $$ = $1; 
                        }
       ;
 
-decl : type ID         { decls_mac ("TYPE ID");  
-                         $$ = $1->add ($2); /* treating as a single token */
+decl : type ID         { $$ = $1->add ($2); /* treating as a single token */
                        } 
-     | VOID            { decls_mac ("VOID"); 
-                         $$ = $1; 
+     | VOID            { $$ = $1; 
                        }
      ;
 
