@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $linux_dir = "~/Open_Programming/linux/";
+
+my $test_dir = "~/Projects/traceR/linux_files/";
+
+sub rm_ws {
+   my $dir = shift;
+   $dir =~ s/^\s+//;
+   $dir =~ s/\s+$//;
+   return $dir;
+}
+
+sub get_c_files {
+   my $dir = shift;
+   my @files = `ls $dir`;
+   for my $file (@files) {
+      $file = rm_ws ($file);
+      system "cp $dir$file $test_dir" if ($file =~ /\.c$/);
+   }
+}
+
+sub execute {
+   my $dir = shift;
+   my @subdirs = `ls -d $dir*/`;
+   for my $subdir (@subdirs) {
+      my $new_dir = rm_ws ($subdir);
+      execute ($new_dir);
+   }
+   get_c_files ($dir);
+}
+
+sub main {
+   execute ($linux_dir);
+}
+
+main ();
