@@ -42,7 +42,7 @@ del:
 	rm stack_out.c
 	rm a_test_out.c
 
-test:
+test: all
 	./traceR tests/fibb.c > fibb_out.c
 	./traceR tests/stack.c > stack_out.c
 	./traceR tests/a_test.c > a_test_out.c
