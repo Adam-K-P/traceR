@@ -33,7 +33,7 @@ using namespace std;
 start : program 
       ;
 
-program : program function     { } 
+program : program new_function     { } 
         | program return       { } 
         | program error        { contents->push_back ($2); 
                                  yyclearin; // squashed the bug ;-)
@@ -56,29 +56,41 @@ return : RETURN ID             { contents->push_back ($1);
                                }
        ;
 
-new_function : idseq new_params '{'  
-                                     { cout << "matched new_function" << endl;
-                                       $3->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
+new_function : idseq new_params '{'  {  cerr << "function read" << endl;
+                                        $1->func_begin = true;
+                                        $3->print_header = true;
+                                        contents->push_back ($1);
+                                        contents->push_back ($2);
+                                        contents->push_back ($3);
                                  
-                                       sp_func this_func = sp_func (new func);
-                                       this_func->tokens->push_back ($1);
-                                       this_func->tokens->push_back ($2);
-                                       this_func->tokens->push_back ($3);
-                                       this_func->name = up_string 
-                                                         (new string ("yo"));
-                                       functions->push (this_func);
-                                     }
-         ;
+                                        sp_func this_func = sp_func (new func);
+                                        this_func->tokens->push_back ($1);
+                                        this_func->tokens->push_back ($2);
+                                        this_func->tokens->push_back ($3);
+                                        this_func->name = up_string 
+                                                          (new string ("yo"));
+                                        functions->push (this_func);
+                                      }
+             | idseq error            { cerr << "idseq error matched" 
+                                               << endl;
+                                        contents->push_back ($1);
+                                        contents->push_back ($2);
+                                        yyclearin;
+                                      }
+             | idseq new_params error { contents->push_back ($1);
+                                        contents->push_back ($2);
+                                        contents->push_back ($3);
+                                        yyclearin;
+                                      }
+             ;
 
-idseq : ID ID idseq_ { $1->func_begin = true;
-                       $$ = $1->add ($2);
+idseq : ID ID idseq_ { $$ = $1->add ($2);
                        $$ = $$->add ($3);
                      }
-      | ID ID        { $1->func_begin = true;
+      | ID ID        { $$ = $1->add ($2); }
+      | ID error     { /*cerr << "ID error matched: " << yytext << endl;*/
                        $$ = $1->add ($2); 
+                       yyclearin;
                      }
 
       ;
@@ -93,10 +105,10 @@ new_params : '(' paramlist ')' { $$ = $1->add ($2);
            | '(' ')'           { $$ = $1->add ($2); }
            ;
 
-paramlist : paramlist ',' idseq { $$ = $$->add ($2);
+paramlist : paramlist ',' idseq_ { $$ = $$->add ($2);
                                   $$ = $$->add ($3);
-                                }
-          | idseq               { $$ = $1; }
+                                 }
+          | idseq_               { $$ = $1; }
           ;
 
 function : quals type ID params '{'
