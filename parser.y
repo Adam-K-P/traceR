@@ -56,49 +56,6 @@ return : RETURN ID             { contents->push_back ($1);
                                }
        ;
 
-new_function : idseq new_params '{'  
-                                     { cout << "matched new_function" << endl;
-                                       $3->print_header = true;
-                                       contents->push_back ($1);
-                                       contents->push_back ($2);
-                                       contents->push_back ($3);
-                                 
-                                       sp_func this_func = sp_func (new func);
-                                       this_func->tokens->push_back ($1);
-                                       this_func->tokens->push_back ($2);
-                                       this_func->tokens->push_back ($3);
-                                       this_func->name = up_string 
-                                                         (new string ("yo"));
-                                       functions->push (this_func);
-                                     }
-         ;
-
-idseq : ID ID idseq_ { $1->func_begin = true;
-                       $$ = $1->add ($2);
-                       $$ = $$->add ($3);
-                     }
-      | ID ID        { $1->func_begin = true;
-                       $$ = $1->add ($2); 
-                     }
-
-      ;
-
-idseq_ : idseq_ ID   { $$ = $$->add ($2); }
-       | ID          { $$ = $1; }
-       ;
-
-new_params : '(' paramlist ')' { $$ = $1->add ($2);
-                                 $$ = $$->add ($3);
-                               }
-           | '(' ')'           { $$ = $1->add ($2); }
-           ;
-
-paramlist : paramlist ',' idseq { $$ = $$->add ($2);
-                                  $$ = $$->add ($3);
-                                }
-          | idseq               { $$ = $1; }
-          ;
-
 function : quals type ID params '{'
                                      { $1->func_begin = true;
                                        $5->print_header = true;
